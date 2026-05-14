@@ -14,6 +14,21 @@ export default function Chat() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // Load history on startup
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/chat/history/default-session')
+        if (res.data.length > 0) {
+          setMessages(res.data)
+        }
+      } catch (err) {
+        console.error('History failed to load', err)
+      }
+    }
+    fetchHistory()
+  }, [])
+
   const sendMessage = async () => {
     if (!input.trim()) return
     const userMsg = { role: 'user', text: input }

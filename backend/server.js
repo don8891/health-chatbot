@@ -1,28 +1,69 @@
 const express = require('express')
 const cors = require('cors')
+const mongoose = require('mongoose')
 require('dotenv').config()
+
+const Chat = require('./models/Chat')
 
 const app = express()
 app.use(cors())
 app.use(express.json())
 
-// Test route
-app.get('/', (req, res) => {
-  res.json({ status: 'HealthBot Backend Running ✅' })
+// Connect MongoDB with options to fix DNS issues
+mongoose.connect(process.env.MONGO_URI, {
+  serverSelectionTimeoutMS: 5000, // Stop trying after 5 seconds
+  family: 4 // Force IPv4 (fixes many Windows DNS issues)
 })
+  .then(() => console.log('MongoDB Connected ✅'))
+  .catch(err => {
+    console.log('MongoDB Connection Error ❌');
+    console.log('Reason:', err.message);
+    console.log('>>> SERVER RUNNING IN OFFLINE MODE (Messages won\'t be saved)');
+  })
 
-// Chat route (connects to Python RAG later)
+// Chat route
 app.post('/api/chat', async (req, res) => {
-  const { message } = req.body
+  const { message, sessionId = 'default-session' } = req.body
   
   try {
-    // Will call Python RAG engine
     const axios = require('axios')
     const ragResponse = await axios.post('http://localhost:8000/query', { query: message })
-    res.json({ answer: ragResponse.data.answer })
+    const botAnswer = ragResponse.data.answer
+
+    // Find or create session and push messages
+    await Chat.findOneAndUpdate(
+      { sessionId },
+      { $push: { messages: [
+        { role: 'user', text: message },
+        { role: 'bot', text: botAnswer }
+      ]}},
+      { upsert: true }
+    )
+
+    res.json({ answer: botAnswer })
   } catch (err) {
-    // Fallback response while RAG isn't ready yet
-    res.json({ answer: `You asked about: "${message}". The AI engine is being connected. Check back on Day 7!` })
+    const fallbackAnswer = `You asked about: "${message}". The AI engine is being connected.`
+    
+    await Chat.findOneAndUpdate(
+      { sessionId },
+      { $push: { messages: [
+        { role: 'user', text: message },
+        { role: 'bot', text: fallbackAnswer }
+      ]}},
+      { upsert: true }
+    )
+
+    res.json({ answer: fallbackAnswer })
+  }
+})
+
+// Get chat history
+app.get('/api/chat/history/:sessionId', async (req, res) => {
+  try {
+    const chat = await Chat.findOne({ sessionId: req.params.sessionId })
+    res.json(chat ? chat.messages : [])
+  } catch (err) {
+    res.status(500).json({ error: 'Could not fetch history' })
   }
 })
 
