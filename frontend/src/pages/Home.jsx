@@ -1,75 +1,125 @@
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../components/Navbar'
+import {
+  Activity, MessageSquare, ShieldAlert,
+  BookOpen, MapPin, Phone, TrendingUp, ArrowRight
+} from 'lucide-react'
+
+const quickActions = [
+  { icon: Activity,     label: 'Symptom\nTracker',    color: 'bg-blue-100 text-blue-600',   route: '/chat' },
+  { icon: BookOpen,     label: 'Medical\nDictionary', color: 'bg-green-100 text-green-600', route: '/chat' },
+  { icon: MapPin,       label: 'Find a\nClinic',      color: 'bg-purple-100 text-purple-600', route: '/chat' },
+  { icon: Phone,        label: 'Emergency\nContacts', color: 'bg-red-100 text-red-600',     route: '/chat' },
+]
+
+const trendingTopics = [
+  { title: 'Understanding Diabetes', tag: 'Prevention',  color: 'bg-blue-50  border-blue-200' },
+  { title: 'Managing Hypertension',  tag: 'Awareness',   color: 'bg-green-50 border-green-200' },
+  { title: 'Dengue Fever Signs',     tag: 'Alert',       color: 'bg-red-50   border-red-200' },
+  { title: 'Mental Health Basics',   tag: 'Wellness',    color: 'bg-purple-50 border-purple-200' },
+]
 
 export default function Home() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6"
-         style={{ background: 'linear-gradient(135deg, #0a0f0d 0%, #0d2018 50%, #0a0f0d 100%)' }}>
-      
-      {/* Animated pulse circle */}
-      <motion.div
-        animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.6, 0.3] }}
-        transition={{ duration: 3, repeat: Infinity }}
-        className="absolute w-96 h-96 rounded-full"
-        style={{ background: 'radial-gradient(circle, #1D9E75 0%, transparent 70%)' }}
-      />
+    <div className="min-h-screen bg-slate-50">
+      <Navbar />
 
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="relative text-center z-10"
-      >
-        {/* Icon */}
+      <main className="max-w-6xl mx-auto px-4 pt-24 pb-12">
+
+        {/* Welcome Banner */}
         <motion.div
-          animate={{ rotate: [0, 5, -5, 0] }}
-          transition={{ duration: 4, repeat: Infinity }}
-          className="text-8xl mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-8 mb-8 text-white relative overflow-hidden"
         >
-          🏥
+          <div className="absolute right-0 top-0 w-64 h-full opacity-10">
+            <Activity size={200} className="absolute -right-8 -top-8" />
+          </div>
+          <h2 className="text-2xl font-bold mb-2">Good day! 👋</h2>
+          <p className="text-primary-100 mb-6 max-w-md">
+            How are you feeling today? Describe your symptoms and get instant AI-powered health awareness.
+          </p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/chat')}
+            className="bg-white text-primary-600 font-semibold px-6 py-3 rounded-xl 
+                       flex items-center gap-2 hover:bg-primary-50 transition"
+          >
+            Check Symptoms Now <ArrowRight size={16} />
+          </motion.button>
         </motion.div>
 
-        <h1 className="text-5xl font-bold mb-4"
-            style={{ color: '#e8f5f0', textShadow: '0 0 40px #1D9E75' }}>
-          HealthBot AI
-        </h1>
-        
-        <p className="text-xl mb-2" style={{ color: '#9FDEC8' }}>
-          AI-Driven Public Health Awareness
-        </p>
-        
-        <p className="text-base mb-10 max-w-md mx-auto" style={{ color: '#5DCAA5' }}>
-          Describe your symptoms. Get instant disease awareness, precautions, and doctor guidance — powered by AI.
-        </p>
+        {/* Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-        <motion.button
-          whileHover={{ scale: 1.05, boxShadow: '0 0 30px #1D9E75' }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => navigate('/chat')}
-          className="px-10 py-4 rounded-2xl text-lg font-semibold text-white"
-          style={{ background: 'linear-gradient(90deg, #0F6E56, #1D9E75)' }}
-        >
-          Check Symptoms →
-        </motion.button>
+          {/* Quick Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
+          >
+            <h3 className="font-semibold text-slate-700 mb-4 flex items-center gap-2">
+              <TrendingUp size={18} className="text-primary-600" />
+              Quick Actions
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              {quickActions.map(({ icon: Icon, label, color, route }) => (
+                <motion.button
+                  key={label}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate(route)}
+                  className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-slate-50 transition"
+                >
+                  <div className={`w-12 h-12 rounded-full ${color} flex items-center justify-center`}>
+                    <Icon size={20} />
+                  </div>
+                  <span className="text-xs text-slate-600 font-medium text-center whitespace-pre-line">
+                    {label}
+                  </span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
 
-        {/* Feature pills */}
-        <div className="flex gap-3 mt-8 justify-center flex-wrap">
-          {['Disease Awareness', 'Precautions', 'Doctor Tips', 'RAG AI'].map((tag) => (
-            <motion.span
-              key={tag}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 }}
-              className="px-4 py-1 rounded-full text-sm"
-              style={{ border: '1px solid #1D9E75', color: '#9FDEC8', background: 'rgba(29,158,117,0.1)' }}
-            >
-              {tag}
-            </motion.span>
-          ))}
+          {/* Trending Topics */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 lg:col-span-2"
+          >
+            <h3 className="font-semibold text-slate-700 mb-4 flex items-center gap-2">
+              <ShieldAlert size={18} className="text-health-500" />
+              Trending Health Topics
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {trendingTopics.map((topic) => (
+                <motion.div
+                  key={topic.title}
+                  whileHover={{ scale: 1.02 }}
+                  onClick={() => navigate('/chat')}
+                  className={`p-4 rounded-xl border ${topic.color} cursor-pointer transition`}
+                >
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                    {topic.tag}
+                  </span>
+                  <p className="font-medium text-slate-700 mt-1">{topic.title}</p>
+                  <div className="flex items-center gap-1 mt-2 text-primary-600 text-sm">
+                    Learn more <ArrowRight size={12} />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
         </div>
-      </motion.div>
+      </main>
     </div>
   )
 }
