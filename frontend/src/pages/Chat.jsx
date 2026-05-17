@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -147,7 +148,38 @@ export default function Chat() {
                       ? 'bg-primary-600 text-white rounded-br-none'
                       : 'bg-white text-slate-700 border border-slate-100 shadow-sm rounded-bl-none'}`}
                 >
-                  {msg.text}
+                  {msg.role === 'bot' ? (
+                    <ReactMarkdown
+                      components={{
+                        h3: ({children}) => (
+                          <h3 className="font-bold text-primary-700 text-sm mt-3 mb-1 first:mt-0">
+                            {children}
+                          </h3>
+                        ),
+                        ul: ({children}) => (
+                          <ul className="space-y-1 my-1">
+                            {children}
+                          </ul>
+                        ),
+                        li: ({children}) => (
+                          <li className="flex items-start gap-2 text-sm">
+                            <span className="text-primary-400 mt-0.5 flex-shrink-0">•</span>
+                            <span>{children}</span>
+                          </li>
+                        ),
+                        strong: ({children}) => (
+                          <strong className="font-semibold text-slate-800">{children}</strong>
+                        ),
+                        p: ({children}) => (
+                          <p className="text-sm leading-relaxed mb-1">{children}</p>
+                        ),
+                      }}
+                    >
+                      {msg.text}
+                    </ReactMarkdown>
+                  ) : (
+                    msg.text
+                  )}
                 </div>
               </motion.div>
             ))}
