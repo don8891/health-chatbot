@@ -1,32 +1,41 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
+from langchain_huggingface import HuggingFaceEmbeddings
+from groq import Groq
+import os
 
 app = FastAPI()
 
-# Load embeddings
+# GROQ CLIENT
+from dotenv import load_dotenv
+load_dotenv()
+
+client = Groq(
+    api_key=os.environ.get("GROQ_API_KEY")
+)
+
+# EMBEDDINGS
 embeddings = HuggingFaceEmbeddings(
     model_name="all-MiniLM-L6-v2"
 )
 
-# Load FAISS database
+# LOAD FAISS
 vectorstore = FAISS.load_local(
     "faiss_index",
     embeddings,
     allow_dangerous_deserialization=True
 )
 
-# Create retriever
 retriever = vectorstore.as_retriever(
     search_kwargs={"k": 4}
 )
 
-# Input model
+# REQUEST MODEL
 class Query(BaseModel):
     query: str
 
-# API endpoint
+# QUERY ENDPOINT
 @app.post("/query")
 async def query_rag(q: Query):
 
@@ -36,18 +45,36 @@ async def query_rag(q: Query):
         [doc.page_content for doc in docs]
     )
 
-    answer = f"""
-Based on health data analysis:
+    chat = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
 
-{context[:800]}
+        messages=[
+            {
+                "role": "system",
+                "content": """
+You are a helpful health awareness assistant.
 
-⚠️ This is for awareness only.
-Please consult a doctor.
+Explain symptoms simply.
+Suggest precautions.
+Always recommend consulting a doctor.
 """
+            },
+
+            {
+                "role": "user",
+                "content": f"""
+Context:
+{context}
+
+Question:
+{q.query}
+"""
+            }
+        ]
+    )
 
     return {
-        "answer": answer,
-        "sources": len(docs)
+        "answer": chat.choices[0].message.content
     }
 
 @app.get("/")
