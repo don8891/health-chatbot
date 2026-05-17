@@ -30,7 +30,7 @@ class Query(BaseModel):
 @app.post("/query")
 async def query_rag(q: Query):
 
-    docs = retriever.get_relevant_documents(q.query)
+    docs = retriever.invoke(q.query)
 
     context = "\n".join(
         [doc.page_content for doc in docs]
@@ -41,7 +41,7 @@ Based on health data analysis:
 
 {context[:800]}
 
- This is for awareness only.
+⚠️ This is for awareness only.
 Please consult a doctor.
 """
 
