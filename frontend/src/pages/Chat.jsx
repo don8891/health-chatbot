@@ -1,19 +1,42 @@
 import { useState, useRef, useEffect } from 'react'
-import ReactMarkdown from 'react-markdown'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import ReactMarkdown from 'react-markdown'
 import {
   Send, Paperclip, Mic, Plus,
-  Activity, ChevronLeft, Bot
+  Activity, ChevronLeft, Bot,
+  Trash2, CheckCircle, AlertCircle,
+  MessageSquare, Settings
 } from 'lucide-react'
 
-const chatHistory = [
-  'Fever & Headache',
-  'Stomach Pain Query',
-  'Skin Rash Analysis',
-]
+const API = 'http://localhost:5000'
 
+// ── Toast notification component ──
+function Toast({ message, type, onClose }) {
+  useEffect(() => {
+    const t = setTimeout(onClose, 3000)
+    return () => clearTimeout(t)
+  }, [onClose])
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 50 }}
+      className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 
+                  rounded-xl shadow-lg text-white text-sm font-medium
+                  ${type === 'success' ? 'bg-health-500' : 'bg-red-500'}`}
+    >
+      {type === 'success'
+        ? <CheckCircle size={18} />
+        : <AlertCircle size={18} />}
+      {message}
+    </motion.div>
+  )
+}
+
+// ── Typing indicator ──
 function TypingIndicator() {
   return (
     <div className="flex items-center gap-1 px-4 py-3 bg-slate-100 rounded-2xl rounded-tl-none w-fit">
@@ -30,42 +53,116 @@ function TypingIndicator() {
 }
 
 export default function Chat() {
-  const [messages, setMessages] = useState([
-    { role: 'bot', text: '👋 Hello! I\'m your AI Health Assistant. Tell me your symptoms and I\'ll help you understand what might be happening. Remember, this is for awareness only — always consult a doctor.' }
-  ])
+  const [messages, setMessages] = useState([{
+    role: 'bot',
+    text: "👋 Hello! I'm your AI Health Assistant. Describe your symptoms and I'll help with awareness. Always consult a doctor for diagnosis."
+  }])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [chatHistory, setChatHistory] = useState([])
+  const [sessionId, setSessionId] = useState(null)
+  const [toast, setToast] = useState(null)
+  const [showSettings, setShowSettings] = useState(false)
+  const [cleaning, setCleaning] = useState(false)
   const bottomRef = useRef(null)
   const navigate = useNavigate()
+
+  // Load chat history on mount
+  useEffect(() => {
+    fetchHistory()
+  }, [])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
 
+  const fetchHistory = async () => {
+    try {
+      const res = await axios.get(`${API}/api/chats`)
+      setChatHistory(res.data.chats || [])
+    } catch {
+      setChatHistory([])
+    }
+  }
+
+  const cleanHistory = async () => {
+    setCleaning(true)
+    try {
+      // First preview how many will be deleted
+      const preview = await axios.get(`${API}/api/chats/clean`)
+      const count = preview.data.count
+
+      // Then delete them
+      await axios.delete(`${API}/api/chats/clean`)
+
+      // Refresh list
+      await fetchHistory()
+
+      setToast({
+        message: count > 0
+          ? `Successfully removed ${count} invalid chat sessions!`
+          : 'No invalid sessions found. History is clean!',
+        type: 'success'
+      })
+    } catch {
+      setToast({ message: 'Cleanup failed. Try again.', type: 'error' })
+    }
+    setCleaning(false)
+    setShowSettings(false)
+  }
+
   const sendMessage = async () => {
     if (!input.trim()) return
+
     const userMsg = { role: 'user', text: input }
     setMessages(prev => [...prev, userMsg])
     setInput('')
     setLoading(true)
 
     try {
-      const res = await axios.post('http://localhost:5000/api/chat', { message: input })
+      const res = await axios.post(`${API}/api/chats`, {
+        message: input,
+        sessionId
+      })
+
       setMessages(prev => [...prev, { role: 'bot', text: res.data.answer }])
-    } catch {
-      setMessages(prev => [...prev, {
-        role: 'bot',
-        text: '⚠️ Backend not connected yet. Complete Day 4-7 to enable AI responses!'
-      }])
+
+      // Save session ID from first message
+      if (res.data.sessionId && !sessionId) {
+        setSessionId(res.data.sessionId)
+        await fetchHistory()  // refresh sidebar
+      }
+
+    } catch (err) {
+      if (err.response?.data?.error === 'invalid_input') {
+        setMessages(prev => [...prev, {
+          role: 'bot',
+          text: '⚠️ Please describe your symptoms more clearly. For example: "I have fever and headache for 2 days"'
+        }])
+      } else {
+        setMessages(prev => [...prev, {
+          role: 'bot',
+          text: '⚠️ Backend not connected yet. Complete Day 4-7 setup!'
+        }])
+      }
     }
     setLoading(false)
+  }
+
+  const startNewChat = () => {
+    setMessages([{
+      role: 'bot',
+      text: "👋 New chat started! Describe your symptoms and I'll help with awareness."
+    }])
+    setSessionId(null)
+    setInput('')
   }
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
 
-      {/* Sidebar */}
+      {/* ── Sidebar ── */}
       <AnimatePresence>
         {(sidebarOpen || window.innerWidth >= 768) && (
           <motion.aside
@@ -74,6 +171,7 @@ export default function Chat() {
             exit={{ x: -280 }}
             className="fixed md:relative z-40 w-72 h-full bg-white border-r border-slate-200 flex flex-col"
           >
+            {/* Top */}
             <div className="p-4 border-b border-slate-100">
               <button
                 onClick={() => navigate('/home')}
@@ -81,30 +179,83 @@ export default function Chat() {
               >
                 <ChevronLeft size={16} /> Back to Home
               </button>
-              <button className="btn-primary w-full flex items-center justify-center gap-2 py-2">
+              <button
+                onClick={startNewChat}
+                className="btn-primary w-full flex items-center justify-center gap-2 py-2"
+              >
                 <Plus size={16} /> New Chat
               </button>
             </div>
 
+            {/* History list */}
             <div className="flex-1 overflow-y-auto p-4">
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">
                 Recent
               </p>
-              {chatHistory.map((item) => (
-                <button
-                  key={item}
-                  className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-600 
-                             hover:bg-slate-50 hover:text-slate-800 transition mb-1"
-                >
-                  {item}
-                </button>
-              ))}
+
+              {chatHistory.length === 0 ? (
+                // ── Empty state ──
+                <div className="flex flex-col items-center justify-center py-10 text-center">
+                  <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-3">
+                    <MessageSquare size={20} className="text-slate-400" />
+                  </div>
+                  <p className="text-sm text-slate-500 font-medium">No recent health chats</p>
+                  <p className="text-xs text-slate-400 mt-1">Start a new conversation above!</p>
+                </div>
+              ) : (
+                chatHistory.map((chat) => (
+                  <button
+                    key={chat.sessionId}
+                    className={`w-full text-left px-3 py-2 rounded-xl text-sm 
+                                text-slate-600 hover:bg-slate-50 hover:text-slate-800 
+                                transition mb-1 truncate
+                                ${sessionId === chat.sessionId ? 'bg-primary-50 text-primary-700' : ''}`}
+                    onClick={() => setSessionId(chat.sessionId)}
+                  >
+                    {chat.title}
+                  </button>
+                ))
+              )}
+            </div>
+
+            {/* Bottom settings */}
+            <div className="p-4 border-t border-slate-100">
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className="flex items-center gap-2 text-slate-400 hover:text-slate-600 text-xs w-full"
+              >
+                <Settings size={14} />
+                Settings & Cleanup
+              </button>
+
+              <AnimatePresence>
+                {showSettings && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-3"
+                  >
+                    <button
+                      onClick={cleanHistory}
+                      disabled={cleaning}
+                      className="w-full flex items-center justify-center gap-2 
+                                 bg-red-50 text-red-600 border border-red-200
+                                 px-4 py-2 rounded-xl text-xs font-medium
+                                 hover:bg-red-100 transition disabled:opacity-50"
+                    >
+                      <Trash2 size={13} />
+                      {cleaning ? 'Cleaning...' : 'Clean Invalid History'}
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.aside>
         )}
       </AnimatePresence>
 
-      {/* Main chat */}
+      {/* ── Main Chat Area ── */}
       <div className="flex-1 flex flex-col h-full">
 
         {/* Header */}
@@ -156,11 +307,7 @@ export default function Chat() {
                             {children}
                           </h3>
                         ),
-                        ul: ({children}) => (
-                          <ul className="space-y-1 my-1">
-                            {children}
-                          </ul>
-                        ),
+                        ul: ({children}) => <ul className="space-y-1 my-1">{children}</ul>,
                         li: ({children}) => (
                           <li className="flex items-start gap-2 text-sm">
                             <span className="text-primary-400 mt-0.5 flex-shrink-0">•</span>
@@ -170,16 +317,12 @@ export default function Chat() {
                         strong: ({children}) => (
                           <strong className="font-semibold text-slate-800">{children}</strong>
                         ),
-                        p: ({children}) => (
-                          <p className="text-sm leading-relaxed mb-1">{children}</p>
-                        ),
+                        p: ({children}) => <p className="text-sm leading-relaxed mb-1">{children}</p>,
                       }}
                     >
                       {msg.text}
                     </ReactMarkdown>
-                  ) : (
-                    msg.text
-                  )}
+                  ) : msg.text}
                 </div>
               </motion.div>
             ))}
@@ -196,13 +339,12 @@ export default function Chat() {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input Bar */}
+        {/* Input bar */}
         <div className="bg-white border-t border-slate-200 px-4 py-4">
           <div className="flex items-end gap-3 bg-slate-50 rounded-2xl border border-slate-200 px-4 py-3">
             <button className="text-slate-400 hover:text-primary-600 transition flex-shrink-0">
               <Paperclip size={18} />
             </button>
-
             <textarea
               value={input}
               onChange={e => setInput(e.target.value)}
@@ -214,22 +356,18 @@ export default function Chat() {
               }}
               placeholder="Describe your symptoms..."
               rows={1}
-              className="flex-1 bg-transparent text-sm text-slate-700 placeholder-slate-400 
-                         outline-none resize-none max-h-32"
+              className="flex-1 bg-transparent text-sm text-slate-700 
+                         placeholder-slate-400 outline-none resize-none max-h-32"
             />
-
             <button className="text-slate-400 hover:text-primary-600 transition flex-shrink-0">
               <Mic size={18} />
             </button>
-
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={sendMessage}
               className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition
-                ${input.trim()
-                  ? 'bg-primary-600 text-white shadow-md'
-                  : 'bg-slate-200 text-slate-400'}`}
+                ${input.trim() ? 'bg-primary-600 text-white shadow-md' : 'bg-slate-200 text-slate-400'}`}
             >
               <Send size={16} />
             </motion.button>
@@ -239,6 +377,17 @@ export default function Chat() {
           </p>
         </div>
       </div>
+
+      {/* Toast notification */}
+      <AnimatePresence>
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
