@@ -9,26 +9,26 @@ function DeleteConfirm({ onConfirm, onCancel }) {
       initial={{ opacity: 0, scale: 0.9, y: -4 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9, y: -4 }}
-      className="absolute right-0 top-full mt-1 z-50 w-52 bg-white border border-slate-200 
+      className="absolute right-0 top-full mt-1 z-50 w-52 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 
                  rounded-xl shadow-xl p-3"
     >
       {/* Arrow pointer */}
-      <div className="absolute -top-1.5 right-4 w-3 h-3 bg-white border-l border-t 
-                      border-slate-200 rotate-45" />
+      <div className="absolute -top-1.5 right-4 w-3 h-3 bg-white dark:bg-slate-800 border-l border-t 
+                      border-slate-200 dark:border-slate-700 rotate-45" />
 
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+        <div className="w-6 h-6 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center flex-shrink-0">
           <AlertTriangle size={12} className="text-red-500" />
         </div>
-        <p className="text-xs font-semibold text-slate-700">Delete this chat?</p>
+        <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">Delete this chat?</p>
       </div>
-      <p className="text-xs text-slate-400 mb-3">This action cannot be undone.</p>
+      <p className="text-xs text-slate-400 dark:text-slate-500 mb-3">This action cannot be undone.</p>
 
       <div className="flex gap-2">
         <button
           onClick={onCancel}
-          className="flex-1 py-1.5 rounded-lg border border-slate-200 text-xs 
-                     text-slate-600 hover:bg-slate-50 transition font-medium"
+          className="flex-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs 
+                     text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition font-medium"
         >
           Cancel
         </button>
@@ -52,7 +52,7 @@ export default function ChatHistoryItem({
   onRenameChat,   // (sessionId, newTitle) => Promise
   onDeleteChat,   // (sessionId) => void  — optimistic, already removed from list
 }) {
-  const [isHovered, setIsHovered]       = useState(false)
+
   const [isEditing, setIsEditing]       = useState(false)
   const [editValue, setEditValue]       = useState(chat.title)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -120,17 +120,15 @@ export default function ChatHistoryItem({
     <div
       ref={containerRef}
       className="relative"
-      onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
-        setIsHovered(false)
         if (!showDeleteConfirm) setShowDeleteConfirm(false)
       }}
     >
       <div
         className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-150 group
           ${isActive
-            ? 'bg-primary-50 text-primary-700'
-            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-800'}`}
+            ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300'
+            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-800 dark:hover:text-slate-200'}`}
       >
 
         {/* ── EDIT MODE ── */}
@@ -143,8 +141,8 @@ export default function ChatHistoryItem({
               onChange={e => setEditValue(e.target.value)}
               onKeyDown={handleKeyDown}
               disabled={saving}
-              className="flex-1 min-w-0 text-sm bg-white border border-primary-300 
-                         rounded-lg px-2 py-1 outline-none text-slate-800
+              className="flex-1 min-w-0 text-sm bg-white dark:bg-slate-700 border border-primary-300 dark:border-primary-600 
+                         rounded-lg px-2 py-1 outline-none text-slate-800 dark:text-slate-200
                          focus:ring-2 focus:ring-primary-400 focus:border-transparent
                          disabled:opacity-50"
             />
@@ -202,7 +200,7 @@ export default function ChatHistoryItem({
                 }}
                 title="Rename chat"
                 className="w-6 h-6 flex items-center justify-center rounded-md
-                           text-slate-400 hover:text-primary-600 hover:bg-primary-50
+                           text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30
                            transition"
               >
                 <Pencil size={13} />
@@ -216,7 +214,7 @@ export default function ChatHistoryItem({
                 }}
                 title="Delete chat"
                 className="w-6 h-6 flex items-center justify-center rounded-md
-                           text-slate-400 hover:text-red-500 hover:bg-red-50
+                           text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30
                            transition"
               >
                 <Trash2 size={13} />

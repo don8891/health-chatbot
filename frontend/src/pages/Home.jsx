@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import {
-  Activity, MessageSquare, ShieldAlert,
+  Activity, ShieldAlert,
   BookOpen, MapPin, Phone, TrendingUp, ArrowRight
 } from 'lucide-react'
 
@@ -24,7 +24,7 @@ export default function Home() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
       <Navbar />
 
       <main className="max-w-6xl mx-auto px-4 pt-24 pb-12">
@@ -61,9 +61,9 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
+            className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700"
           >
-            <h3 className="font-semibold text-slate-700 mb-4 flex items-center gap-2">
+            <h3 className="font-semibold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
               <TrendingUp size={18} className="text-primary-600" />
               Quick Actions
             </h3>
@@ -92,9 +92,9 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 lg:col-span-2"
+            className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 lg:col-span-2"
           >
-            <h3 className="font-semibold text-slate-700 mb-4 flex items-center gap-2">
+            <h3 className="font-semibold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
               <ShieldAlert size={18} className="text-health-500" />
               Trending Health Topics
             </h3>
@@ -109,7 +109,7 @@ export default function Home() {
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
                     {topic.tag}
                   </span>
-                  <p className="font-medium text-slate-700 mt-1">{topic.title}</p>
+                  <p className="font-medium text-slate-700 dark:text-slate-200 mt-1">{topic.title}</p>
                   <div className="flex items-center gap-1 mt-2 text-primary-600 text-sm">
                     Learn more <ArrowRight size={12} />
                   </div>

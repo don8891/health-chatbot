@@ -86,8 +86,6 @@ export default function Chat() {
   const [activeSessionId, setActiveSessionId] = useState(null)   // ← active session
   const [activeSessionMeta, setActiveSessionMeta] = useState(null)
   const [toast, setToast]                     = useState(null)
-  const [showSettings, setShowSettings]       = useState(false)
-  const [cleaning, setCleaning]               = useState(false)
   const [isNewChat, setIsNewChat]             = useState(true)   // true = fresh chat
 
   const bottomRef = useRef(null)
@@ -189,29 +187,10 @@ export default function Chat() {
     if (activeSessionId === sessionId) startNewChat()
   }
 
-  // ── Clean fake history ──
-  const cleanHistory = async () => {
-    setCleaning(true)
-    try {
-      const preview = await axios.get(`${API}/api/chats/clean`)
-      const count   = preview.data.count
-      await axios.delete(`${API}/api/chats/clean`)
-      await fetchHistory()
-      setToast({
-        message: count > 0
-          ? `Removed ${count} invalid sessions!`
-          : 'History is already clean!',
-        type: 'success'
-      })
-    } catch {
-      setToast({ message: 'Cleanup failed.', type: 'error' })
-    }
-    setCleaning(false)
-    setShowSettings(false)
-  }
+
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
+    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden transition-colors duration-300">
 
       {/* ════════════════════════════════
           SIDEBAR
@@ -222,15 +201,15 @@ export default function Chat() {
             initial={{ x: -280 }}
             animate={{ x: 0 }}
             exit={{ x: -280 }}
-            className="fixed md:relative z-40 w-72 h-full bg-white 
-                       border-r border-slate-200 flex flex-col"
+            className="fixed md:relative z-40 w-72 h-full bg-white dark:bg-slate-800 
+                       border-r border-slate-200 dark:border-slate-700 flex flex-col"
           >
             {/* Top */}
             <div className="p-4 border-b border-slate-100">
               <button
                 onClick={() => navigate('/home')}
-                className="flex items-center gap-2 text-slate-500 
-                           hover:text-slate-700 text-sm mb-4"
+                className="flex items-center gap-2 text-slate-500 dark:text-slate-400 
+                           hover:text-slate-700 dark:hover:text-slate-200 text-sm mb-4"
               >
                 <ChevronLeft size={16} /> Back to Home
               </button>
@@ -256,10 +235,10 @@ export default function Chat() {
                                   flex items-center justify-center mb-3">
                     <MessageSquare size={20} className="text-slate-400" />
                   </div>
-                  <p className="text-sm text-slate-500 font-medium">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
                     No recent health chats
                   </p>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
                     Start a new conversation above!
                   </p>
                 </div>
@@ -280,40 +259,7 @@ export default function Chat() {
               )}
             </div>
 
-            {/* Settings & cleanup */}
-            <div className="p-4 border-t border-slate-100">
-              <button
-                onClick={() => setShowSettings(!showSettings)}
-                className="flex items-center gap-2 text-slate-400 
-                           hover:text-slate-600 text-xs w-full"
-              >
-                <Settings size={14} />
-                Settings & Cleanup
-              </button>
 
-              <AnimatePresence>
-                {showSettings && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="mt-3"
-                  >
-                    <button
-                      onClick={cleanHistory}
-                      disabled={cleaning}
-                      className="w-full flex items-center justify-center gap-2
-                                 bg-red-50 text-red-600 border border-red-200
-                                 px-4 py-2 rounded-xl text-xs font-medium
-                                 hover:bg-red-100 transition disabled:opacity-50"
-                    >
-                      <Trash2 size={13} />
-                      {cleaning ? 'Cleaning...' : 'Clean Invalid History'}
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
           </motion.aside>
         )}
       </AnimatePresence>
@@ -324,21 +270,21 @@ export default function Chat() {
       <div className="flex-1 flex flex-col h-full min-w-0">
 
         {/* Header */}
-        <div className="bg-white border-b border-slate-200 px-4 py-3 
+        <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 py-3 
                         flex items-center gap-3 flex-shrink-0">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden w-8 h-8 rounded-lg bg-slate-100 
+            className="md:hidden w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 
                        flex items-center justify-center"
           >
             <Activity size={16} className="text-primary-600" />
           </button>
-          <div className="w-9 h-9 bg-primary-100 rounded-full 
+          <div className="w-9 h-9 bg-primary-100 dark:bg-primary-900/50 rounded-full 
                           flex items-center justify-center">
             <Bot size={18} className="text-primary-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-slate-800 text-sm truncate">
+            <p className="font-semibold text-slate-800 dark:text-slate-200 text-sm truncate">
               {activeSessionMeta?.title || 'Health Assistant AI'}
             </p>
             <p className="text-xs text-health-500 flex items-center gap-1">
@@ -382,10 +328,10 @@ export default function Chat() {
         </div>
 
         {/* ── Input bar ── */}
-        <div className="bg-white border-t border-slate-200 px-4 py-4 flex-shrink-0">
-          <div className="flex items-end gap-3 bg-slate-50 rounded-2xl 
-                          border border-slate-200 px-4 py-3">
-            <button className="text-slate-400 hover:text-primary-600 
+        <div className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 px-4 py-4 flex-shrink-0">
+          <div className="flex items-end gap-3 bg-slate-50 dark:bg-slate-700 rounded-2xl 
+                          border border-slate-200 dark:border-slate-600 px-4 py-3">
+            <button className="text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 
                                transition flex-shrink-0">
               <Paperclip size={18} />
             </button>
@@ -406,8 +352,8 @@ export default function Chat() {
               }
               disabled={sessionLoading}
               rows={1}
-              className="flex-1 bg-transparent text-sm text-slate-700 
-                         placeholder-slate-400 outline-none resize-none 
+              className="flex-1 bg-transparent text-sm text-slate-700 dark:text-slate-200 
+                         placeholder-slate-400 dark:placeholder-slate-500 outline-none resize-none 
                          max-h-32 disabled:opacity-50"
             />
 

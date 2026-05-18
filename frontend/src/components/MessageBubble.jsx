@@ -36,13 +36,13 @@ export default function MessageBubble({ msg, index }) {
           className={`px-4 py-3 rounded-2xl text-sm leading-relaxed
             ${isUser
               ? 'bg-primary-600 text-white rounded-br-none'
-              : 'bg-white text-slate-700 border border-slate-100 shadow-sm rounded-bl-none'}`}
+              : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-600 shadow-sm rounded-bl-none'}`}
         >
           {!isUser ? (
             <ReactMarkdown
               components={{
                 h3: ({ children }) => (
-                  <h3 className="font-bold text-primary-700 text-sm mt-3 mb-1 first:mt-0">
+                  <h3 className="font-bold text-primary-700 dark:text-primary-400 text-sm mt-3 mb-1 first:mt-0">
                     {children}
                   </h3>
                 ),
@@ -56,7 +56,7 @@ export default function MessageBubble({ msg, index }) {
                   </li>
                 ),
                 strong: ({ children }) => (
-                  <strong className="font-semibold text-slate-800">{children}</strong>
+                  <strong className="font-semibold text-slate-800 dark:text-slate-100">{children}</strong>
                 ),
                 p: ({ children }) => (
                   <p className="text-sm leading-relaxed mb-1">{children}</p>

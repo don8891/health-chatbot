@@ -6,48 +6,56 @@
 
 @layer base {
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
     font-family: 'Inter', sans-serif;
     background-color: #f8fafc;
     color: #334155;
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
+
+  /* Dark mode body */
+  .dark body {
+    background-color: #0f172a;
+    color: #e2e8f0;
+  }
+
   h1 { @apply text-4xl font-bold tracking-tight; }
   h2 { @apply text-2xl font-semibold; }
   h3 { @apply text-lg font-medium; }
 }
 
 @layer components {
-  /* Button variants */
   .btn-primary {
     @apply bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold
            hover:bg-primary-700 hover:scale-105 transition-all duration-200
-           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-primary-500 focus-visible:ring-offset-2
            active:scale-95 shadow-md hover:shadow-lg;
   }
   .btn-secondary {
-    @apply border-2 border-primary-600 text-primary-600 px-6 py-3 rounded-xl font-semibold
-           hover:bg-primary-50 hover:scale-105 transition-all duration-200
-           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+    @apply border-2 border-primary-600 text-primary-600 px-6 py-3 rounded-xl
+           font-semibold hover:bg-primary-50 hover:scale-105 transition-all duration-200
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-primary-500 focus-visible:ring-offset-2
            active:scale-95;
   }
   .btn-danger {
     @apply bg-red-100 text-red-700 px-6 py-3 rounded-xl font-bold
            hover:bg-red-200 hover:scale-105 transition-all duration-200
-           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2
-           active:scale-95;
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-red-500 focus-visible:ring-offset-2 active:scale-95;
   }
-
-  /* Glass card */
   .glass-card {
     @apply bg-white/80 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl;
   }
-
-  /* Input field */
   .input-field {
     @apply w-full px-4 py-3 rounded-xl border border-slate-200 bg-white
            text-slate-700 placeholder-slate-400 text-sm
-           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
-           transition-all duration-200;
+           focus:outline-none focus:ring-2 focus:ring-primary-500
+           focus:border-transparent transition-all duration-200
+           dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200
+           dark:placeholder-slate-500;
   }
 }
