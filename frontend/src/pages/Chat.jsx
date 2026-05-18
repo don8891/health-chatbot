@@ -9,6 +9,8 @@ import {
   MessageSquare, Settings
 } from 'lucide-react'
 
+import { useLocalHistory } from '../hooks/useLocalHistory'
+
 import ChatHistoryItem from '../components/ChatHistoryItem'
 import MessageBubble   from '../components/MessageBubble'
 import LoadingSpinner  from '../components/LoadingSpinner'
@@ -73,7 +75,14 @@ export default function Chat() {
   const [loading, setLoading]                 = useState(false)
   const [sessionLoading, setSessionLoading]   = useState(false)  // loading old session
   const [sidebarOpen, setSidebarOpen]         = useState(false)
-  const [chatHistory, setChatHistory]         = useState([])
+  const {
+    chatHistory,
+    createSession,
+    addMessage,
+    renameSession,
+    deleteSession,
+    getSession
+  } = useLocalHistory()
   const [activeSessionId, setActiveSessionId] = useState(null)   // ← active session
   const [activeSessionMeta, setActiveSessionMeta] = useState(null)
   const [toast, setToast]                     = useState(null)
@@ -89,11 +98,6 @@ export default function Chat() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
 
-  // ── Load history list on mount ──
-  useEffect(() => {
-    fetchHistory()
-  }, [])
-
   // ── Load session when activeSessionId changes ──
   useEffect(() => {
     if (!activeSessionId) return
@@ -101,38 +105,22 @@ export default function Chat() {
     loadChatSession(activeSessionId)
   }, [activeSessionId])
 
-  // ── Fetch sidebar history ──
-  const fetchHistory = async () => {
-    try {
-      const res = await axios.get(`${API}/api/chats`)
-      setChatHistory(res.data.chats || [])
-    } catch {
-      setChatHistory([])
-    }
-  }
-
   // ── Load a past session into the chat window ──
-  const loadChatSession = async (sessionId) => {
+  const loadChatSession = (sessionId) => {
     setSessionLoading(true)
     setIsNewChat(false)
-    setMessages([])
 
-    try {
-      const res = await axios.get(`${API}/api/chats/${sessionId}`)
-      const { messages: fetchedMessages, title, createdAt } = res.data
+    const session = getSession(sessionId)  // reads from localStorage
 
-      // Map DB messages → UI format
-      const mapped = fetchedMessages.map(m => ({
-        role:      m.role,
-        text:      m.text,
-        timestamp: m.timestamp
-      }))
-
-      setMessages(mapped)
-      setActiveSessionMeta({ title, createdAt, messages: mapped })
-
-    } catch {
-      setToast({ message: 'Failed to load chat. Please try again.', type: 'error' })
+    if (session) {
+      setMessages(session.messages)
+      setActiveSessionMeta({
+        title:     session.title,
+        createdAt: session.createdAt,
+        messages:  session.messages
+      })
+    } else {
+      setToast({ message: 'Session not found.', type: 'error' })
       startNewChat()
     }
 
@@ -155,70 +143,50 @@ export default function Chat() {
   const sendMessage = async () => {
     if (!input.trim() || sessionLoading) return
 
-    const userMsg = { role: 'user', text: input, timestamp: new Date() }
-    setMessages(prev => [...prev, userMsg])
+    const userText = input
     setInput('')
     setLoading(true)
 
-    try {
-      const res = await axios.post(`${API}/api/chats`, {
-        message: input,
-        sessionId: activeSessionId
-      })
+    // Optimistically show user message
+    const userMsg = { role: 'user', text: userText, timestamp: new Date().toISOString() }
+    setMessages(prev => [...prev, userMsg])
 
-      const botMsg = {
-        role: 'bot',
-        text: res.data.answer,
-        timestamp: new Date()
-      }
+    try {
+      const res = await axios.post(`${API}/api/chats`, { message: userText })
+      const botText = res.data.answer
+
+      const botMsg = { role: 'bot', text: botText, timestamp: new Date().toISOString() }
       setMessages(prev => [...prev, botMsg])
 
-      // First message creates a new session
-      if (res.data.sessionId && !activeSessionId) {
-        setActiveSessionId(res.data.sessionId)
-        setIsNewChat(false)
-        await fetchHistory()
+      if (!activeSessionId) {
+        // First message — create new local session
+        const newId = createSession(userText, botText)
+        setActiveSessionId(newId)
+      } else {
+        // Add to existing local session
+        addMessage(activeSessionId, userText, botText)
       }
 
     } catch (err) {
-      const errMsg = err.response?.data?.error === 'invalid_input'
-        ? '⚠️ Please describe your symptoms more clearly. Example: "I have fever and headache for 2 days"'
-        : '⚠️ Backend not connected yet. Complete Day 4-7 setup!'
+      const errText = err.response?.data?.error === 'invalid_input'
+        ? '⚠️ Please describe symptoms more clearly. Example: "I have fever and body pain"'
+        : '⚠️ Could not connect to AI. Make sure the backend is running!'
 
-      setMessages(prev => [...prev, { role: 'bot', text: errMsg }])
+      setMessages(prev => [...prev, { role: 'bot', text: errText }])
     }
 
     setLoading(false)
   }
 
   // ── Rename chat (optimistic) ──
-  const onRenameChat = async (sessionId, newTitle) => {
-    setChatHistory(prev =>
-      prev.map(c => c.sessionId === sessionId ? { ...c, title: newTitle } : c)
-    )
-    try {
-      await axios.patch(`${API}/api/chats/${sessionId}/rename`, { title: newTitle })
-    } catch {
-      fetchHistory()
-      setToast({ message: 'Rename failed. Please try again.', type: 'error' })
-    }
+  const onRenameChat = (sessionId, newTitle) => {
+    renameSession(sessionId, newTitle)  // updates localStorage instantly
   }
 
   // ── Delete chat (optimistic) ──
-  const onDeleteChat = async (sessionId) => {
-    setChatHistory(prev => prev.filter(c => c.sessionId !== sessionId))
-
-    if (activeSessionId === sessionId) {
-      startNewChat()
-    }
-
-    try {
-      await axios.delete(`${API}/api/chats/${sessionId}`)
-      setToast({ message: 'Chat deleted successfully.', type: 'success' })
-    } catch {
-      fetchHistory()
-      setToast({ message: 'Delete failed. Please try again.', type: 'error' })
-    }
+  const onDeleteChat = (sessionId) => {
+    deleteSession(sessionId)             // removes from localStorage instantly
+    if (activeSessionId === sessionId) startNewChat()
   }
 
   // ── Clean fake history ──
