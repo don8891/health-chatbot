@@ -5,8 +5,8 @@ import axios from 'axios'
 import {
   Send, Paperclip, Mic, Plus,
   Activity, ChevronLeft, Bot,
-  Trash2, CheckCircle, AlertCircle,
-  MessageSquare, Settings
+  CheckCircle, AlertCircle,
+  MessageSquare
 } from 'lucide-react'
 
 import { useLocalHistory } from '../hooks/useLocalHistory'
@@ -99,8 +99,8 @@ export default function Chat() {
   // ── Load session when activeSessionId changes ──
   useEffect(() => {
     if (!activeSessionId) return
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadChatSession(activeSessionId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSessionId])
 
   // ── Load a past session into the chat window ──

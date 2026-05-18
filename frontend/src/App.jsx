@@ -3,6 +3,7 @@ import Landing  from './pages/Landing'
 import Home     from './pages/Home'
 import Chat     from './pages/Chat'
 import Settings from './pages/Settings'
+import InstallPrompt from './components/InstallPrompt'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/chat"     element={<Chat />}     />
         <Route path="/settings" element={<Settings />} />
       </Routes>
+      <InstallPrompt />
     </Router>
   )
 }
