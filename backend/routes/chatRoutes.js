@@ -139,4 +139,31 @@ router.post('/', validateFirstMessage, async (req, res) => {
   }
 })
 
+// PATCH /api/chats/:sessionId/rename — rename a chat
+router.patch('/:sessionId/rename', async (req, res) => {
+  const { title } = req.body
+  if (!title || title.trim().length === 0) {
+    return res.status(400).json({ error: 'Title cannot be empty' })
+  }
+  try {
+    await Chat.findOneAndUpdate(
+      { sessionId: req.params.sessionId },
+      { $set: { title: title.trim() } }
+    )
+    res.json({ success: true, title: title.trim() })
+  } catch {
+    res.status(500).json({ error: 'Rename failed' })
+  }
+})
+
+// DELETE /api/chats/:sessionId — delete one chat session
+router.delete('/:sessionId', async (req, res) => {
+  try {
+    await Chat.findOneAndDelete({ sessionId: req.params.sessionId })
+    res.json({ success: true })
+  } catch {
+    res.status(500).json({ error: 'Delete failed' })
+  }
+})
+
 module.exports = router

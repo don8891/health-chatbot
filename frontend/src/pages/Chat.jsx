@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import ReactMarkdown from 'react-markdown'
+import ChatHistoryItem from '../components/ChatHistoryItem'
 import {
   Send, Paperclip, Mic, Plus,
   Activity, ChevronLeft, Bot,
@@ -159,6 +160,43 @@ export default function Chat() {
     setInput('')
   }
 
+  // ── Rename a chat (optimistic update) ──
+  const onRenameChat = async (targetSessionId, newTitle) => {
+    // Update locally first (instant UI)
+    setChatHistory(prev =>
+      prev.map(c => c.sessionId === targetSessionId ? { ...c, title: newTitle } : c)
+    )
+    // Then sync to backend
+    try {
+      await axios.patch(`${API}/api/chats/${targetSessionId}/rename`, { title: newTitle })
+    } catch {
+      // If backend fails, revert by re-fetching
+      fetchHistory()
+      setToast({ message: 'Rename failed. Please try again.', type: 'error' })
+    }
+  }
+
+  // ── Delete a chat (optimistic update) ──
+  const onDeleteChat = async (targetSessionId) => {
+    // Remove locally first (instant UI)
+    setChatHistory(prev => prev.filter(c => c.sessionId !== targetSessionId))
+
+    // If deleted chat was active, reset chat window
+    if (sessionId === targetSessionId) {
+      startNewChat()
+    }
+
+    // Then sync to backend
+    try {
+      await axios.delete(`${API}/api/chats/${targetSessionId}`)
+      setToast({ message: 'Chat deleted successfully.', type: 'success' })
+    } catch {
+      // Revert if backend fails
+      fetchHistory()
+      setToast({ message: 'Delete failed. Please try again.', type: 'error' })
+    }
+  }
+
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
 
@@ -204,16 +242,14 @@ export default function Chat() {
                 </div>
               ) : (
                 chatHistory.map((chat) => (
-                  <button
+                  <ChatHistoryItem
                     key={chat.sessionId}
-                    className={`w-full text-left px-3 py-2 rounded-xl text-sm 
-                                text-slate-600 hover:bg-slate-50 hover:text-slate-800 
-                                transition mb-1 truncate
-                                ${sessionId === chat.sessionId ? 'bg-primary-50 text-primary-700' : ''}`}
+                    chat={chat}
+                    isActive={sessionId === chat.sessionId}
                     onClick={() => setSessionId(chat.sessionId)}
-                  >
-                    {chat.title}
-                  </button>
+                    onRenameChat={onRenameChat}
+                    onDeleteChat={onDeleteChat}
+                  />
                 ))
               )}
             </div>
