@@ -6,7 +6,13 @@ require('dotenv').config()
 const chatRoutes = require('./routes/chatRoutes')
 
 const app = express()
-app.use(cors())
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://your-app.vercel.app'    // ← update after Vercel deploy
+  ],
+  credentials: true
+}))
 app.use(express.json())
 
 // Connect MongoDB
