@@ -146,12 +146,18 @@ router.patch('/:sessionId/rename', async (req, res) => {
     return res.status(400).json({ error: 'Title cannot be empty' })
   }
   try {
-    await Chat.findOneAndUpdate(
+    const chat = await Chat.findOneAndUpdate(
       { sessionId: req.params.sessionId },
-      { $set: { title: title.trim() } }
+      { $set: { title: title.trim() } },
+      { new: true }
     )
+    if (!chat) {
+      console.log(`[Rename] Chat not found for sessionId: ${req.params.sessionId}`)
+      return res.status(404).json({ error: 'Chat not found' })
+    }
     res.json({ success: true, title: title.trim() })
-  } catch {
+  } catch (err) {
+    console.error('Rename route error:', err)
     res.status(500).json({ error: 'Rename failed' })
   }
 })
@@ -159,10 +165,44 @@ router.patch('/:sessionId/rename', async (req, res) => {
 // DELETE /api/chats/:sessionId — delete one chat session
 router.delete('/:sessionId', async (req, res) => {
   try {
-    await Chat.findOneAndDelete({ sessionId: req.params.sessionId })
+    const deleted = await Chat.findOneAndDelete({ sessionId: req.params.sessionId })
+    if (!deleted) {
+      console.log(`[Delete] Chat not found for sessionId: ${req.params.sessionId}`)
+      return res.status(404).json({ error: 'Chat not found' })
+    }
     res.json({ success: true })
-  } catch {
+  } catch (err) {
+    console.error('Delete route error:', err)
     res.status(500).json({ error: 'Delete failed' })
+  }
+})
+
+// GET /api/chats/:sessionId — fetch single chat session with all messages
+router.get('/:sessionId', async (req, res) => {
+  try {
+    const chat = await Chat.findOne({ sessionId: req.params.sessionId }).lean()
+
+    if (!chat) {
+      return res.status(404).json({ error: 'Chat session not found' })
+    }
+
+    // Safely sort messages by timestamp
+    const messages = chat.messages ? [...chat.messages].sort(
+      (a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0)
+    ) : []
+
+    res.json({
+      sessionId: chat.sessionId,
+      title: chat.title,
+      messages: messages.map(m => ({
+        role: m.role,
+        text: m.text,
+        timestamp: m.timestamp
+      }))
+    })
+  } catch (err) {
+    console.error('Fetch session error:', err)
+    res.status(500).json({ error: 'Failed to fetch session' })
   }
 })
 
