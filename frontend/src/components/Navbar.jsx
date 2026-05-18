@@ -16,7 +16,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
 
         {/* Logo */}
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
           <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
             <Activity size={18} className="text-white" />
           </div>
