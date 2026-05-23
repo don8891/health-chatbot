@@ -1,124 +1,495 @@
-import { motion } from 'framer-motion'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import {
-  Activity, ShieldAlert,
-  BookOpen, MapPin, Phone, TrendingUp, ArrowRight
+  Activity, BookOpen, MapPin, Phone,
+  ArrowRight, ShieldAlert, TrendingUp,
+  MessageSquare, Heart, Thermometer,
+  Wind, Droplets, Sun, Search, X,
+  ChevronRight, Clock, Sparkles
 } from 'lucide-react'
 
-const quickActions = [
-  { icon: Activity,     label: 'Symptom\nTracker',    color: 'bg-blue-100 text-blue-600',   route: '/chat' },
-  { icon: BookOpen,     label: 'Medical\nDictionary', color: 'bg-green-100 text-green-600', route: '/chat' },
-  { icon: MapPin,       label: 'Find a\nClinic',      color: 'bg-purple-100 text-purple-600', route: '/chat' },
-  { icon: Phone,        label: 'Emergency\nContacts', color: 'bg-red-100 text-red-600',     route: '/chat' },
+// ── Animated counter ──
+function AnimatedCounter({ target, suffix = '' }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        let start = 0
+        const step = target / 60
+        const timer = setInterval(() => {
+          start += step
+          if (start >= target) { setCount(target); clearInterval(timer) }
+          else setCount(Math.floor(start))
+        }, 16)
+      }
+    })
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [target])
+
+  return <span ref={ref}>{count}{suffix}</span>
+}
+
+// ── Health tip of the day ──
+const healthTips = [
+  { tip: 'Drink at least 8 glasses of water daily to stay hydrated.', icon: Droplets, color: 'text-blue-400' },
+  { tip: 'Walk for 30 minutes a day to improve heart health.', icon: Activity, color: 'text-green-400' },
+  { tip: 'Sleep 7-8 hours every night for better immunity.', icon: Heart, color: 'text-red-400' },
+  { tip: 'Eat 5 servings of fruits and vegetables daily.', icon: Sun, color: 'text-yellow-400' },
+  { tip: 'Wash hands for 20 seconds to prevent infections.', icon: Wind, color: 'text-teal-400' },
+  { tip: 'Avoid skipping breakfast — it fuels your brain.', icon: Sparkles, color: 'text-purple-400' },
+  { tip: 'Limit screen time before bed for better sleep.', icon: Thermometer, color: 'text-orange-400' },
 ]
 
+// ── Quick actions ──
+const quickActions = [
+  {
+    icon: Activity,
+    label: 'Symptom Tracker',
+    desc: 'Check what your symptoms mean',
+    color: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+    iconBg: 'bg-blue-500',
+    route: '/chat',
+    query: 'I want to check my symptoms'
+  },
+  {
+    icon: BookOpen,
+    label: 'Disease Info',
+    desc: 'Learn about any disease',
+    color: 'bg-green-500/10 text-green-500 border-green-500/20',
+    iconBg: 'bg-green-500',
+    route: '/chat',
+    query: 'Tell me about common diseases'
+  },
+  {
+    icon: ShieldAlert,
+    label: 'Prevention Tips',
+    desc: 'How to stay healthy',
+    color: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+    iconBg: 'bg-purple-500',
+    route: '/chat',
+    query: 'Give me disease prevention tips'
+  },
+  {
+    icon: Phone,
+    label: 'Emergency Info',
+    desc: 'When to see a doctor',
+    color: 'bg-red-500/10 text-red-500 border-red-500/20',
+    iconBg: 'bg-red-500',
+    route: '/chat',
+    query: 'When should I go to emergency?'
+  },
+]
+
+// ── Trending topics ──
 const trendingTopics = [
-  { title: 'Understanding Diabetes', tag: 'Prevention',  color: 'bg-blue-50  border-blue-200' },
-  { title: 'Managing Hypertension',  tag: 'Awareness',   color: 'bg-green-50 border-green-200' },
-  { title: 'Dengue Fever Signs',     tag: 'Alert',       color: 'bg-red-50   border-red-200' },
-  { title: 'Mental Health Basics',   tag: 'Wellness',    color: 'bg-purple-50 border-purple-200' },
+  {
+    title: 'Understanding Diabetes',
+    tag: 'Prevention',
+    desc: 'Learn about blood sugar, symptoms and lifestyle changes.',
+    tagColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+    border: 'border-blue-100 dark:border-blue-900/30',
+    query: 'Tell me about diabetes symptoms and prevention'
+  },
+  {
+    title: 'Managing Hypertension',
+    tag: 'Awareness',
+    desc: 'High blood pressure — silent killer. Know the signs.',
+    tagColor: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+    border: 'border-green-100 dark:border-green-900/30',
+    query: 'What is hypertension and how to manage it'
+  },
+  {
+    title: 'Dengue Fever Warning',
+    tag: '🚨 Alert',
+    desc: 'Recognize early dengue symptoms. Act fast.',
+    tagColor: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+    border: 'border-red-100 dark:border-red-900/30',
+    query: 'What are dengue fever symptoms and precautions'
+  },
+  {
+    title: 'Mental Health Basics',
+    tag: 'Wellness',
+    desc: 'Stress, anxiety and depression — you are not alone.',
+    tagColor: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+    border: 'border-purple-100 dark:border-purple-900/30',
+    query: 'Tell me about mental health and stress management'
+  },
+]
+
+// ── Common symptom quick buttons ──
+const quickSymptoms = [
+  '🤒 Fever', '🤕 Headache', '😮‍💨 Cough',
+  '🤢 Nausea', '😴 Fatigue', '🤧 Cold',
+  '💊 Body Pain', '😰 Sweating'
 ]
 
 export default function Home() {
-  const navigate = useNavigate()
+  const navigate  = useNavigate()
+  const [searchQuery, setSearchQuery]   = useState('')
+  const [searchFocused, setSearchFocused] = useState(false)
+  const [todayTip] = useState(
+    () => healthTips[new Date().getDay() % healthTips.length]
+  )
+  const TipIcon = todayTip.icon
+
+  const handleSearch = (query) => {
+    if (!query.trim()) return
+    // Navigate to chat with pre-filled query
+    navigate('/chat', { state: { initialMessage: query } })
+  }
+
+  const handleQuickSymptom = (symptom) => {
+    const clean = symptom.replace(/^\S+\s/, '') // remove emoji
+    navigate('/chat', { state: { initialMessage: `I have ${clean.toLowerCase()}` } })
+  }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 
+                    transition-colors duration-300">
       <Navbar />
 
-      <main className="max-w-6xl mx-auto px-4 pt-24 pb-12">
+      <main className="max-w-6xl mx-auto px-4 pt-24 pb-16">
 
-        {/* Welcome Banner */}
+        {/* ── Hero Search Banner ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-8 mb-8 text-white relative overflow-hidden"
+          className="relative rounded-3xl overflow-hidden mb-8 p-8 md:p-12"
+          style={{
+            background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #1d4ed8 100%)'
+          }}
         >
-          <div className="absolute right-0 top-0 w-64 h-full opacity-10">
-            <Activity size={200} className="absolute -right-8 -top-8" />
+          {/* Background pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-4 right-4 w-64 h-64 
+                            border-2 border-white rounded-full" />
+            <div className="absolute top-8 right-8 w-48 h-48 
+                            border-2 border-white rounded-full" />
+            <div className="absolute -bottom-8 -left-8 w-48 h-48 
+                            border-2 border-white rounded-full" />
           </div>
-          <h2 className="text-2xl font-bold mb-2">Good day! 👋</h2>
-          <p className="text-primary-100 mb-6 max-w-md">
-            How are you feeling today? Describe your symptoms and get instant AI-powered health awareness.
-          </p>
+
+          <div className="relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="inline-flex items-center gap-2 bg-white/20 
+                         text-white px-3 py-1 rounded-full text-sm mb-4"
+            >
+              <Sparkles size={13} />
+              AI-Powered Health Awareness
+            </motion.div>
+
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+              What health concern can
+              <span className="block">we help you with today?</span>
+            </h1>
+            <p className="text-blue-100 mb-8 max-w-lg">
+              Describe symptoms, ask about diseases, or get prevention tips — 
+              instantly, anonymously, for free.
+            </p>
+
+            {/* Search bar */}
+            <div className="relative max-w-2xl">
+              <div className={`flex items-center gap-3 bg-white dark:bg-slate-800 
+                               rounded-2xl px-4 py-3 shadow-xl transition-all duration-200
+                               ${searchFocused ? 'ring-2 ring-white/50' : ''}`}>
+                <Search size={18} className="text-slate-400 flex-shrink-0" />
+                <input
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setSearchFocused(false)}
+                  onKeyDown={e => e.key === 'Enter' && handleSearch(searchQuery)}
+                  placeholder="Search symptoms, diseases, medicines..."
+                  className="flex-1 bg-transparent text-slate-700 dark:text-slate-200
+                             placeholder-slate-400 outline-none text-sm"
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery('')}>
+                    <X size={16} className="text-slate-400 hover:text-slate-600" />
+                  </button>
+                )}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleSearch(searchQuery)}
+                  className="bg-primary-600 text-white px-5 py-2 rounded-xl 
+                             text-sm font-semibold hover:bg-primary-700 
+                             transition flex-shrink-0"
+                >
+                  Ask AI
+                </motion.button>
+              </div>
+
+              {/* Quick symptom pills */}
+              <div className="flex gap-2 mt-4 flex-wrap">
+                {quickSymptoms.map(symptom => (
+                  <motion.button
+                    key={symptom}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleQuickSymptom(symptom)}
+                    className="bg-white/20 hover:bg-white/30 text-white 
+                               text-xs px-3 py-1.5 rounded-full transition
+                               backdrop-blur-sm border border-white/20"
+                  >
+                    {symptom}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ── Stats Bar ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="grid grid-cols-3 gap-4 mb-8"
+        >
+          {[
+            { label: 'Diseases Covered', target: 300, suffix: '+' },
+            { label: 'Symptoms Known',   target: 132, suffix: '+' },
+            { label: 'Always Free',      target: 100, suffix: '%' },
+          ].map((stat, i) => (
+            <div key={stat.label}
+                 className="bg-white dark:bg-slate-800 rounded-2xl p-4 
+                            text-center border border-slate-100 dark:border-slate-700
+                            shadow-sm">
+              <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                <AnimatedCounter target={stat.target} suffix={stat.suffix} />
+              </div>
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* ── Health Tip of the Day ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="bg-gradient-to-r from-health-500/10 to-health-600/5
+                     dark:from-health-500/20 dark:to-health-600/10
+                     border border-health-500/20 rounded-2xl p-5 mb-8
+                     flex items-center gap-4"
+        >
+          <div className="w-12 h-12 bg-health-500/20 rounded-2xl 
+                          flex items-center justify-center flex-shrink-0">
+            <TipIcon size={22} className={todayTip.color} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs font-semibold text-health-600 
+                               dark:text-health-400 uppercase tracking-wide">
+                Health Tip of the Day
+              </span>
+              <Clock size={11} className="text-health-500" />
+            </div>
+            <p className="text-slate-700 dark:text-slate-200 text-sm font-medium">
+              {todayTip.tip}
+            </p>
+          </div>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => navigate('/chat')}
-            className="bg-white text-primary-600 font-semibold px-6 py-3 rounded-xl 
-                       flex items-center gap-2 hover:bg-primary-50 transition"
+            onClick={() => navigate('/chat', {
+              state: { initialMessage: todayTip.tip }
+            })}
+            className="flex-shrink-0 text-xs text-health-600 dark:text-health-400 
+                       font-semibold flex items-center gap-1 
+                       hover:text-health-700 transition"
           >
-            Check Symptoms Now <ArrowRight size={16} />
+            Learn more <ChevronRight size={14} />
           </motion.button>
         </motion.div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* ── Main Grid ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* Quick Actions */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700"
-          >
-            <h3 className="font-semibold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
-              <TrendingUp size={18} className="text-primary-600" />
-              Quick Actions
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              {quickActions.map(({ icon: Icon, label, color, route }) => (
-                <motion.button
-                  key={label}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate(route)}
-                  className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-slate-50 transition"
-                >
-                  <div className={`w-12 h-12 rounded-full ${color} flex items-center justify-center`}>
-                    <Icon size={20} />
-                  </div>
-                  <span className="text-xs text-slate-600 font-medium text-center whitespace-pre-line">
-                    {label}
-                  </span>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Trending Topics */}
+          {/* Quick Actions — left column */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 lg:col-span-2"
+            className="lg:col-span-1"
           >
-            <h3 className="font-semibold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
+            <h2 className="font-bold text-slate-800 dark:text-slate-100 
+                           mb-4 flex items-center gap-2">
+              <TrendingUp size={18} className="text-primary-600" />
+              Quick Actions
+            </h2>
+            <div className="space-y-3">
+              {quickActions.map(({ icon: Icon, label, desc, color, iconBg, route, query }) => (
+                <motion.button
+                  key={label}
+                  whileHover={{ scale: 1.02, x: 4 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate(route, { state: { initialMessage: query } })}
+                  className={`w-full flex items-center gap-4 p-4 rounded-2xl
+                               border bg-white dark:bg-slate-800
+                               dark:border-slate-700 shadow-sm
+                               hover:shadow-md transition-all text-left
+                               border-slate-100`}
+                >
+                  <div className={`w-10 h-10 ${iconBg} rounded-xl 
+                                  flex items-center justify-center flex-shrink-0`}>
+                    <Icon size={18} className="text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-slate-800 
+                                  dark:text-slate-100 text-sm">
+                      {label}
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                      {desc}
+                    </p>
+                  </div>
+                  <ArrowRight size={16} className="text-slate-400 flex-shrink-0" />
+                </motion.button>
+              ))}
+            </div>
+
+            {/* Start Chat CTA */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/chat')}
+              className="w-full mt-4 flex items-center justify-center gap-2
+                         bg-primary-600 hover:bg-primary-700 text-white
+                         font-semibold py-4 rounded-2xl transition shadow-md
+                         hover:shadow-lg"
+            >
+              <MessageSquare size={18} />
+              Start Health Chat
+              <ArrowRight size={16} />
+            </motion.button>
+          </motion.div>
+
+          {/* Trending Topics — right columns */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="lg:col-span-2"
+          >
+            <h2 className="font-bold text-slate-800 dark:text-slate-100 
+                           mb-4 flex items-center gap-2">
               <ShieldAlert size={18} className="text-health-500" />
               Trending Health Topics
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {trendingTopics.map((topic) => (
                 <motion.div
                   key={topic.title}
-                  whileHover={{ scale: 1.02 }}
-                  onClick={() => navigate('/chat')}
-                  className={`p-4 rounded-xl border ${topic.color} cursor-pointer transition`}
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate('/chat', {
+                    state: { initialMessage: topic.query }
+                  })}
+                  className={`p-5 rounded-2xl border bg-white dark:bg-slate-800
+                               ${topic.border} cursor-pointer
+                               shadow-sm hover:shadow-md transition-all`}
                 >
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  <span className={`text-xs font-bold px-2 py-1 rounded-full 
+                                    ${topic.tagColor}`}>
                     {topic.tag}
                   </span>
-                  <p className="font-medium text-slate-700 dark:text-slate-200 mt-1">{topic.title}</p>
-                  <div className="flex items-center gap-1 mt-2 text-primary-600 text-sm">
-                    Learn more <ArrowRight size={12} />
+                  <p className="font-semibold text-slate-800 dark:text-slate-100 
+                                mt-3 mb-2">
+                    {topic.title}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 
+                                mb-3 leading-relaxed">
+                    {topic.desc}
+                  </p>
+                  <div className="flex items-center gap-1 text-primary-600 
+                                  dark:text-primary-400 text-sm font-medium">
+                    Ask AI about this
+                    <ArrowRight size={14} />
                   </div>
                 </motion.div>
               ))}
             </div>
-          </motion.div>
 
+            {/* Disclaimer card */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 
+                         border border-amber-200 dark:border-amber-800 
+                         rounded-2xl flex items-start gap-3"
+            >
+              <ShieldAlert size={18} className="text-amber-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-amber-700 
+                               dark:text-amber-400 mb-1">
+                  Medical Disclaimer
+                </p>
+                <p className="text-xs text-amber-600 dark:text-amber-500 
+                               leading-relaxed">
+                  HealthBot AI is for awareness and education only. 
+                  It does not replace professional medical advice. 
+                  Always consult a qualified doctor for diagnosis and treatment.
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
         </div>
+
+        {/* ── Emergency Section ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          className="mt-8 bg-red-50 dark:bg-red-900/20 border border-red-200 
+                     dark:border-red-800 rounded-3xl p-6 
+                     flex flex-col md:flex-row items-center 
+                     justify-between gap-4"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-red-100 dark:bg-red-900/50 
+                            rounded-2xl flex items-center justify-center">
+              <Phone size={22} className="text-red-500" />
+            </div>
+            <div>
+              <p className="font-bold text-red-700 dark:text-red-400">
+                Medical Emergency?
+              </p>
+              <p className="text-sm text-red-500 dark:text-red-500">
+                Don't use this app — call emergency services immediately
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-3 flex-wrap">
+            <div className="bg-red-100 dark:bg-red-900/50 px-5 py-3 
+                            rounded-xl text-center">
+              <p className="text-xs text-red-500 font-medium">India Emergency</p>
+              <p className="text-xl font-bold text-red-700 dark:text-red-400">
+                108
+              </p>
+            </div>
+            <div className="bg-red-100 dark:bg-red-900/50 px-5 py-3 
+                            rounded-xl text-center">
+              <p className="text-xs text-red-500 font-medium">Ambulance</p>
+              <p className="text-xl font-bold text-red-700 dark:text-red-400">
+                102
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
       </main>
     </div>
   )

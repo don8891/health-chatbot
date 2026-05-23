@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import axios from 'axios'
 import {
   Send, Paperclip, Mic, Plus,
@@ -90,6 +90,7 @@ export default function Chat() {
 
   const bottomRef = useRef(null)
   const navigate  = useNavigate()
+  const location  = useLocation()
 
   // ── Scroll to bottom ──
   useEffect(() => {
@@ -102,6 +103,19 @@ export default function Chat() {
     loadChatSession(activeSessionId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSessionId])
+
+  // ── Handle Pre-filled Messages ──
+  useEffect(() => {
+    if (location.state?.initialMessage) {
+      setInput(location.state.initialMessage)
+      // Auto-send after small delay
+      setTimeout(() => {
+        sendMessageWithText(location.state.initialMessage)
+      }, 500)
+      // Clear state so it doesn't resend on refresh
+      window.history.replaceState({}, document.title)
+    }
+  }, [])
 
   // ── Load a past session into the chat window ──
   const loadChatSession = (sessionId) => {
@@ -173,6 +187,37 @@ export default function Chat() {
       setMessages(prev => [...prev, { role: 'bot', text: errText }])
     }
 
+    setLoading(false)
+  }
+
+  // ── Send message with pre-filled text ──
+  const sendMessageWithText = async (text) => {
+    if (!text.trim()) return
+    const userMsg = { role: 'user', text, timestamp: new Date().toISOString() }
+    setMessages(prev => [...prev, userMsg])
+    setInput('')
+    setLoading(true)
+
+    try {
+      const res = await axios.post(`${API}/api/chats`, { message: text })
+      const botText = res.data.answer
+      const botMsg = { role: 'bot', text: botText, timestamp: new Date().toISOString() }
+      setMessages(prev => [...prev, botMsg])
+
+      if (!activeSessionId) {
+        // First message — create new local session
+        const newId = createSession(text, botText)
+        setActiveSessionId(newId)
+      } else {
+        // Add to existing local session
+        addMessage(activeSessionId, text, botText)
+      }
+    } catch {
+      setMessages(prev => [...prev, {
+        role: 'bot',
+        text: '⚠️ Could not connect to AI. Make sure backend is running!'
+      }])
+    }
     setLoading(false)
   }
 
