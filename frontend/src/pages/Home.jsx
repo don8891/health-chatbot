@@ -51,37 +51,40 @@ const quickActions = [
     icon: Activity,
     label: 'Symptom Tracker',
     desc: 'Check what your symptoms mean',
-    color: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
     iconBg: 'bg-blue-500',
     route: '/chat',
-    query: 'I want to check my symptoms'
+    // Don't auto-send — just set a placeholder prompt
+    prefill: '',
+    welcome: '🩺 Please describe your symptoms in detail.\n\nFor example: "I have fever, headache and body pain for 2 days"\n\nThe more details you give, the better I can help!'
   },
   {
     icon: BookOpen,
     label: 'Disease Info',
     desc: 'Learn about any disease',
-    color: 'bg-green-500/10 text-green-500 border-green-500/20',
     iconBg: 'bg-green-500',
     route: '/chat',
-    query: 'Tell me about common diseases'
+    prefill: 'Tell me about ',
+    welcome: '📚 Which disease would you like to learn about?\n\nType the disease name — for example:\n• "Tell me about diabetes"\n• "Tell me about dengue fever"\n• "Tell me about tuberculosis"'
   },
   {
     icon: ShieldAlert,
     label: 'Prevention Tips',
     desc: 'How to stay healthy',
-    color: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
     iconBg: 'bg-purple-500',
     route: '/chat',
-    query: 'Give me disease prevention tips'
+    prefill: 'How can I prevent ',
+    welcome: '🛡️ What would you like to prevent?\n\nAsk me anything like:\n• "How can I prevent diabetes?"\n• "How to avoid getting dengue?"\n• "Tips to boost my immunity"'
   },
   {
     icon: Phone,
     label: 'Emergency Info',
     desc: 'When to see a doctor',
-    color: 'bg-red-500/10 text-red-500 border-red-500/20',
     iconBg: 'bg-red-500',
     route: '/chat',
-    query: 'When should I go to emergency?'
+    // This one we CAN auto-send — it's a general question
+    autoSend: true,
+    prefill: 'When should I go to the emergency room and what are danger signs that need immediate doctor attention?',
+    welcome: ''
   },
 ]
 
@@ -139,13 +142,25 @@ export default function Home() {
 
   const handleSearch = (query) => {
     if (!query.trim()) return
-    // Navigate to chat with pre-filled query
-    navigate('/chat', { state: { initialMessage: query } })
+    // Auto-send search queries — user typed it intentionally
+    navigate('/chat', {
+      state: {
+        autoSend: true,
+        autoSendMessage: query,
+        prefillInput: query
+      }
+    })
   }
 
   const handleQuickSymptom = (symptom) => {
-    const clean = symptom.replace(/^\S+\s/, '') // remove emoji
-    navigate('/chat', { state: { initialMessage: `I have ${clean.toLowerCase()}` } })
+    const clean = symptom.replace(/^\S+\s/, '')
+    // Pre-fill but don't send — user should confirm/add more details
+    navigate('/chat', {
+      state: {
+        prefillInput: `I have ${clean.toLowerCase()} `,
+        welcomeOverride: `🩺 You selected **${clean}**.\n\nPlease add more details for a better response:\n• How many days have you had this?\n• Any other symptoms along with it?\n• Your age group (child/adult/elderly)?\n\nThen press Send!`
+      }
+    })
   }
 
   return (
@@ -304,7 +319,11 @@ export default function Home() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate('/chat', {
-              state: { initialMessage: todayTip.tip }
+              state: {
+                prefillInput: todayTip.tip,
+                autoSend: true,
+                autoSendMessage: todayTip.tip
+              }
             })}
             className="flex-shrink-0 text-xs text-health-600 dark:text-health-400 
                        font-semibold flex items-center gap-1 
@@ -330,34 +349,42 @@ export default function Home() {
               Quick Actions
             </h2>
             <div className="space-y-3">
-              {quickActions.map(({ icon: Icon, label, desc, color, iconBg, route, query }) => (
-                <motion.button
-                  key={label}
-                  whileHover={{ scale: 1.02, x: 4 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => navigate(route, { state: { initialMessage: query } })}
-                  className={`w-full flex items-center gap-4 p-4 rounded-2xl
+              {quickActions.map((action) => {
+                const Icon = action.icon
+                return (
+                  <motion.button
+                    key={action.label}
+                    whileHover={{ scale: 1.02, x: 4 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => navigate(action.route, {
+                      state: {
+                        prefillInput: action.prefill,
+                        welcomeOverride: action.welcome,
+                        autoSend: action.autoSend || false,
+                        autoSendMessage: action.prefill
+                      }
+                    })}
+                    className="w-full flex items-center gap-4 p-4 rounded-2xl
                                border bg-white dark:bg-slate-800
-                               dark:border-slate-700 shadow-sm
-                               hover:shadow-md transition-all text-left
-                               border-slate-100`}
-                >
-                  <div className={`w-10 h-10 ${iconBg} rounded-xl 
-                                  flex items-center justify-center flex-shrink-0`}>
-                    <Icon size={18} className="text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-slate-800 
-                                  dark:text-slate-100 text-sm">
-                      {label}
-                    </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                      {desc}
-                    </p>
-                  </div>
-                  <ArrowRight size={16} className="text-slate-400 flex-shrink-0" />
-                </motion.button>
-              ))}
+                               border-slate-100 dark:border-slate-700 shadow-sm
+                               hover:shadow-md transition-all text-left"
+                  >
+                    <div className={`w-10 h-10 ${action.iconBg} rounded-xl 
+                                    flex items-center justify-center flex-shrink-0`}>
+                      <Icon size={18} className="text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm">
+                        {action.label}
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                        {action.desc}
+                      </p>
+                    </div>
+                    <ArrowRight size={16} className="text-slate-400 flex-shrink-0" />
+                  </motion.button>
+                )
+              })}
             </div>
 
             {/* Start Chat CTA */}
@@ -395,7 +422,11 @@ export default function Home() {
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/chat', {
-                    state: { initialMessage: topic.query }
+                    state: {
+                      prefillInput: topic.query,
+                      autoSend: true,
+                      autoSendMessage: topic.query
+                    }
                   })}
                   className={`p-5 rounded-2xl border bg-white dark:bg-slate-800
                                ${topic.border} cursor-pointer

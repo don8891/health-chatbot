@@ -106,15 +106,45 @@ export default function Chat() {
 
   // ── Handle Pre-filled Messages ──
   useEffect(() => {
-    if (location.state?.initialMessage) {
-      setInput(location.state.initialMessage)
-      // Auto-send after small delay
-      setTimeout(() => {
-        sendMessageWithText(location.state.initialMessage)
-      }, 500)
-      // Clear state so it doesn't resend on refresh
-      window.history.replaceState({}, document.title)
+    const state = location.state
+
+    if (!state) return
+
+    // Case 1: Welcome override message (Symptom Tracker, Disease Info, etc.)
+    if (state.welcomeOverride) {
+      setMessages([{
+        role: 'bot',
+        text: state.welcomeOverride,
+        timestamp: new Date().toISOString()
+      }])
+      // Pre-fill the input box but DON'T send
+      if (state.prefillInput) {
+        setInput(state.prefillInput)
+      }
     }
+
+    // Case 2: Auto-send (Emergency Info, Trending Topics)
+    else if (state.autoSend && state.autoSendMessage) {
+      setMessages([{
+        role: 'bot',
+        text: "👋 Hello! I'm your AI Health Assistant. Let me help you with that...",
+        timestamp: new Date().toISOString()
+      }])
+      setTimeout(() => {
+        sendMessageWithText(state.autoSendMessage)
+      }, 600)
+    }
+
+    // Case 3: Simple initialMessage (Search, Quick Symptoms, etc.)
+    else if (state.initialMessage) {
+      setInput(state.initialMessage)
+      setTimeout(() => {
+        sendMessageWithText(state.initialMessage)
+      }, 500)
+    }
+
+    // Clear location state
+    window.history.replaceState({}, document.title)
   }, [])
 
   // ── Load a past session into the chat window ──

@@ -39,7 +39,7 @@ export default function Landing() {
 
   const handleStart = () => {
     setClicked(true)
-    setTimeout(() => navigate('/chat'), 500)
+    setTimeout(() => navigate('/home'), 500)
   }
 
   return (
