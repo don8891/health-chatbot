@@ -1,13 +1,18 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-import os
+from langchain_huggingface import HuggingFaceEmbeddings
+from groq import Groq
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
 app = FastAPI()
+
+client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
+)
 
 # ✅ YOUR SYSTEM PROMPT — paste it exactly here
 SYSTEM_PROMPT = """
@@ -70,10 +75,6 @@ async def query_rag(q: Query):
 
     # Step 2: Send to Groq LLM with your system prompt
     try:
-        from groq import Groq
-
-        client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
