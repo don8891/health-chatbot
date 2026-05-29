@@ -84,7 +84,8 @@ router.post('/', validateFirstMessage, async (req, res) => {
 
   try {
     // Call Python RAG engine
-    const ragResponse = await axios.post('http://localhost:8000/query', {
+    const RAG_URL = process.env.RAG_URL || 'http://localhost:8000'
+    const ragResponse = await axios.post(`${RAG_URL}/query`, {
       query: message
     })
     const answer = ragResponse.data.answer

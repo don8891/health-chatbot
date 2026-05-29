@@ -6,11 +6,13 @@ require('dotenv').config()
 const chatRoutes = require('./routes/chatRoutes')
 
 const app = express()
+const allowedOrigins = [
+  'http://localhost:3000',
+  process.env.FRONTEND_URL
+].filter(Boolean)
+
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://your-app.vercel.app'    // ← update after Vercel deploy
-  ],
+  origin: allowedOrigins,
   credentials: true
 }))
 app.use(express.json())

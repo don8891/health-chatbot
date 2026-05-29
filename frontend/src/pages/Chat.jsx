@@ -16,7 +16,7 @@ import MessageBubble   from '../components/MessageBubble'
 import LoadingSpinner  from '../components/LoadingSpinner'
 import SessionHeader   from '../components/SessionHeader'
 
-const API = 'http://localhost:5000'
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000'
 
 // ── Toast ──
 function Toast({ message, type, onClose }) {
