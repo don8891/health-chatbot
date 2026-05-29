@@ -2,11 +2,9 @@ fastapi
 uvicorn
 langchain
 langchain-community
-langchain-huggingface
-faiss-cpu==1.7.4
-sentence-transformers
+fastembed
+faiss-cpu>=1.7.4
 pandas
 openpyxl
 groq
 python-dotenv
-huggingface-hub
