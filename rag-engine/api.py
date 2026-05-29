@@ -101,6 +101,7 @@ Please respond strictly following the structured format from your instructions."
         return {"answer": answer, "sources": len(docs)}
 
     except Exception as e:
+        print(f"Error calling Groq API: {e}")
         # Fallback if Groq not set up yet
         return {
             "answer": f"""### 🩺 What Might Be Happening
