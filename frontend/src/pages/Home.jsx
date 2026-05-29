@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import {
-  Activity, BookOpen, MapPin, Phone,
+  Activity, BookOpen, Phone,
   ArrowRight, ShieldAlert, TrendingUp,
   MessageSquare, Heart, Thermometer,
   Wind, Droplets, Sun, Search, X,

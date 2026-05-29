@@ -145,6 +145,7 @@ export default function Chat() {
 
     // Clear location state
     window.history.replaceState({}, document.title)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // ── Load a past session into the chat window ──
