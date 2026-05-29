@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Activity, Search, MessageSquare,
+  Activity, Settings, MessageSquare,
   Sun, Moon, User, ChevronDown,
   Type, Trash2, Shield, Check
 } from 'lucide-react'
@@ -99,24 +99,7 @@ export default function Navbar() {
           </span>
         </div>
 
-        {/* ── Search Bar (hidden on mobile) ── */}
-        <div className="hidden md:flex items-center gap-2
-                        bg-slate-100 dark:bg-slate-800
-                        border border-transparent dark:border-slate-700
-                        hover:border-primary-300 dark:hover:border-primary-600
-                        rounded-xl px-4 py-2 flex-1 max-w-sm
-                        transition-all duration-200 group">
-          <Search
-            size={15}
-            className="text-slate-400 dark:text-slate-500 group-hover:text-primary-500 transition"
-          />
-          <input
-            placeholder="Search health topics..."
-            className="bg-transparent text-sm outline-none
-                       text-slate-600 dark:text-slate-300
-                       placeholder-slate-400 dark:placeholder-slate-500 w-full"
-          />
-        </div>
+
 
         {/* ── Right Actions ── */}
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -190,10 +173,10 @@ export default function Navbar() {
                             : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-600 hover:bg-slate-200 dark:hover:bg-slate-700'
                           }`}
             >
-              {/* Avatar circle */}
+              {/* Settings circle */}
               <div className="w-6 h-6 bg-primary-600 rounded-lg
                               flex items-center justify-center">
-                <User size={14} className="text-white" />
+                <Settings size={14} className="text-white" />
               </div>
 
               <motion.div
