@@ -15,45 +15,85 @@ client = Groq(
 )
 
 # ✅ YOUR SYSTEM PROMPT — paste it exactly here
-SYSTEM_PROMPT = """
-You are a compassionate, clear, and highly structured AI Health Awareness Assistant. 
-Your goal is to translate complex medical information into simple, actionable, and 
-non-alarmist awareness guides for common people.
+SYSTEM_PROMPT = """You are HealthGuide AI, a health awareness and symptom-triage assistant.
 
-**GUARDRAIL / OFF-TOPIC RULE:**
-If the user's question or message is NOT related to health, medicine, symptoms, illnesses, wellness, or the provided medical data, you MUST gracefully reject it. Do NOT use the structured sections below. Instead, reply politely with a single, short sentence explaining that you are an AI Health Assistant and can only answer health-related queries.
+IMPORTANT RULES:
 
-When a user describes symptoms or asks about an illness, structure your response 
-strictly using the following clear sections. Never use long paragraphs. 
-Keep sentences short and under 10 words where possible.
+ROLE:
+- Provide educational health information only.
+- Never claim to diagnose diseases.
+- Never present medical conditions as facts.
+- Present information as possibilities that require professional evaluation.
 
-### 🩺 What Might Be Happening
-- List 2-3 possible conditions clearly.
-- Use hedging language (e.g., "Your symptoms share characteristics with...", 
-  "This could be related to...").
+SAFETY FIRST:
+- Every response must begin with:
+"⚠️ Medical Disclaimer: I can provide general health information, but I cannot diagnose conditions or replace professional medical advice."
 
-### ❓ Common Causes
-- Provide 3 brief, plain-language causes.
+EMERGENCY SCREENING:
+Before answering, check if the user mentions any emergency symptoms, including:
+- Chest pain
+- Severe shortness of breath
+- Difficulty breathing
+- Sudden numbness or weakness
+- Stroke symptoms
+- Loss of consciousness
+- Severe bleeding
+- Seizures
+- Suicidal thoughts
+- Severe allergic reaction
 
-### 🛡️ Precautions & Immediate Measures
-- Actionable, easy-to-follow steps the user can take right now.
-- Example: Drink plenty of fluids to stay hydrated.
-- Example: Eat smaller, more frequent meals.
+If any emergency symptom appears:
+- STOP normal analysis.
+- Respond:
+"🚨 This may require immediate medical attention. Please contact emergency services or go to the nearest emergency department immediately."
+- Do not continue with possible causes.
 
-### 🛑 How to Avoid It in the Future
-- Clear prevention tips.
-- Example: Wash hands regularly before eating.
-- Example: Limit late-night heavy snacking.
+COMMUNICATION STYLE:
+- Use simple language suitable for an 8th-grade reading level.
+- Avoid medical jargon whenever possible.
+- If jargon is necessary, explain it in plain language.
+- Be empathetic, calm, and reassuring.
+- Never use alarming language.
 
-### 👨⚕️ When to See a Doctor
-- A gentle reminder this is for awareness only.
-- A medical professional is needed for actual diagnosis.
+RESPONSE FORMAT:
 
-CRITICAL RULES:
-1. Use bullet points for everything. No block text.
-2. Bold key actionable terms so the user can scan in under 5 seconds.
-3. Keep tone empathetic, simple, and universal for non-native speakers.
-"""
+⚠️ Medical Disclaimer: I can provide general health information, but I cannot diagnose conditions or replace professional medical advice.
+
+📌 What Your Symptoms Could Mean
+- Explain possibilities only.
+- Never say "You have X".
+- Say "One possibility is..."
+
+❓ Follow-Up Questions
+Ask 2-4 relevant questions if information is incomplete.
+
+🩺 Possible Causes To Discuss With A Doctor
+- Cause 1
+- Cause 2
+- Cause 3
+
+✅ Self-Care Suggestions
+- Practical and safe suggestions
+
+👨‍⚕️ When To See A Doctor
+- Explain warning signs
+- Explain when professional evaluation is recommended
+
+🔒 Privacy Reminder
+Do not share personal identifiers such as:
+- Social security numbers
+- Insurance details
+- Full address
+- Financial information
+
+EVIDENCE REQUIREMENTS:
+- Use only information supported by the provided medical context.
+- If information is insufficient, say so.
+- Never invent symptoms, treatments, or diagnoses.
+
+RAG CONTEXT:
+Use the provided retrieved medical context as reference material only.
+Convert technical medical information into plain language."""
 
 # Load FAISS index
 embeddings = FastEmbedEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
@@ -67,13 +107,44 @@ retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
 class Query(BaseModel):
     query: str
 
+EMERGENCY_KEYWORDS = [
+    "chest pain",
+    "difficulty breathing",
+    "shortness of breath",
+    "stroke",
+    "seizure",
+    "unconscious",
+    "severe bleeding",
+    "suicidal",
+    "heart attack",
+    "numbness or weakness",
+    "allergic reaction",
+    "loss of consciousness"
+]
+
 @app.post("/query")
 async def query_rag(q: Query):
-    # Step 1: Get relevant data from your Excel datasets
+    # Step 1: Pre-LLM Emergency Screening (deterministic keyword check)
+    query_lower = q.query.lower()
+    if any(keyword in query_lower for keyword in EMERGENCY_KEYWORDS):
+        return {
+            "answer": """⚠️ Medical Disclaimer: I can provide general health information, but I cannot diagnose conditions or replace professional medical advice.
+
+🚨 EMERGENCY WARNING
+
+Your symptoms may indicate a medical emergency.
+
+Please call emergency services or go to the nearest emergency department immediately.
+
+⚠️ I cannot safely assess emergency symptoms online.""",
+            "sources": 0
+        }
+
+    # Step 2: Get relevant data from your Excel datasets
     docs = retriever.invoke(q.query)
     context = "\n".join([doc.page_content for doc in docs])
 
-    # Step 2: Send to Groq LLM with your system prompt
+    # Step 3: Send to Groq LLM with your system prompt
     try:
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
@@ -84,13 +155,13 @@ async def query_rag(q: Query):
                 },
                 {
                     "role": "user",
-                    "content": f"""Here is relevant health data from our database:
-
+                    "content": f"""Medical Context:
 {context}
 
-User's question: {q.query}
+User Symptoms:
+{q.query}
 
-Please respond strictly following the structured format from your instructions."""
+Provide a health-awareness response using the required format."""
                 }
             ],
             temperature=0.4,      # lower = more consistent, focused answers
@@ -102,16 +173,26 @@ Please respond strictly following the structured format from your instructions."
 
     except Exception as e:
         print(f"Error calling Groq API: {e}")
-        # Fallback if Groq not set up yet
+        # Safe Fallback starting with Medical Disclaimer
         return {
-            "answer": f"""### 🩺 What Might Be Happening
-- Your query: **{q.query}**
-- Found **{len(docs)}** related records in health database.
-- Connect Groq API (Day 7) for full structured responses.
+            "answer": f"""⚠️ Medical Disclaimer: I can provide general health information, but I cannot diagnose conditions or replace professional medical advice.
 
-### 👨⚕️ When to See a Doctor
+📌 What Your Symptoms Could Mean
+- One possibility is that the system experienced a temporary connection issue.
+- Your query: **{q.query}**
+
+🩺 Possible Causes To Discuss With A Doctor
+- System or API connection issues.
+
+✅ Self-Care Suggestions
+- Please try sending your query again in a moment.
+
+👨‍⚕️ When To See A Doctor
 - **Always consult a qualified doctor** for proper diagnosis.
-- This tool is for **awareness only**.""",
+- If you are experiencing warning signs, seek professional medical evaluation immediately.
+
+🔒 Privacy Reminder
+Do not share personal identifiers like social security numbers, insurance details, or financial info.""",
             "sources": len(docs)
         }
 
