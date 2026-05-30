@@ -14,7 +14,6 @@ import { useLocalHistory } from '../hooks/useLocalHistory'
 import ChatHistoryItem from '../components/ChatHistoryItem'
 import MessageBubble   from '../components/MessageBubble'
 import LoadingSpinner  from '../components/LoadingSpinner'
-import SessionHeader   from '../components/SessionHeader'
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000'
 
@@ -86,7 +85,6 @@ export default function Chat() {
   const [activeSessionId, setActiveSessionId] = useState(null)   // ← active session
   const [activeSessionMeta, setActiveSessionMeta] = useState(null)
   const [toast, setToast]                     = useState(null)
-  const [isNewChat, setIsNewChat]             = useState(true)   // true = fresh chat
 
   const bottomRef = useRef(null)
   const navigate  = useNavigate()
@@ -151,7 +149,6 @@ export default function Chat() {
   // ── Load a past session into the chat window ──
   const loadChatSession = (sessionId) => {
     setSessionLoading(true)
-    setIsNewChat(false)
 
     const session = getSession(sessionId)  // reads from localStorage
 
@@ -178,7 +175,6 @@ export default function Chat() {
     }])
     setActiveSessionId(null)
     setActiveSessionMeta(null)
-    setIsNewChat(true)
     setInput('')
   }
 
@@ -381,11 +377,6 @@ export default function Chat() {
             </div>
           ) : (
             <>
-              {/* History banner — shown when viewing old session */}
-              {!isNewChat && activeSessionMeta && (
-                <SessionHeader chat={activeSessionMeta} />
-              )}
-
               {/* Messages */}
               <div className="px-4 py-6 space-y-4">
                 <AnimatePresence>

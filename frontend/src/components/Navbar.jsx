@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Activity, Settings, MessageSquare,
-  Sun, Moon, User, ChevronDown,
+  Sun, Moon, ChevronDown,
   Type, Trash2, Shield, Check
 } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
