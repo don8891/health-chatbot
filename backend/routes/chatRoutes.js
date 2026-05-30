@@ -132,6 +132,11 @@ router.post('/', validateFirstMessage, async (req, res) => {
     res.json({ answer, sessionId })
 
   } catch (err) {
+    console.error('Error contacting RAG Engine:', err.message || err)
+    if (err.response) {
+      console.error('RAG response status:', err.response.status)
+      console.error('RAG response data:', err.response.data)
+    }
     // RAG not connected yet — return fallback
     res.json({
       answer: `⚠️ AI engine not connected yet. Your message: "${message}"`,
