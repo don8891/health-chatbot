@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
-const STORAGE_KEY = 'medclarify_chats'
-const SETTINGS_KEY = 'medclarify_settings'
+const STORAGE_KEY = 'healthykuttan_chats'
+const SETTINGS_KEY = 'healthykuttan_settings'
 
 // ── Local history hook ──
 export function useLocalHistory() {

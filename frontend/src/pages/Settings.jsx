@@ -188,7 +188,7 @@ export default function Settings() {
         </div>
 
         <p className="text-center text-xs text-slate-400 pb-4">
-          MedClarify · Free & Open · No accounts ever
+          Healthykuttan · Free & Open · No accounts ever
         </p>
       </div>
 

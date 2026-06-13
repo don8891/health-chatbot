@@ -1,15 +1,15 @@
-# 🏥 MedClarify
+# 🏥 Healthykuttan
 
-![MedClarify](https://img.shields.io/badge/Status-Live-success)
+![Healthykuttan](https://img.shields.io/badge/Status-Live-success)
 ![React](https://img.shields.io/badge/Frontend-React-blue)
 ![Node.js](https://img.shields.io/badge/Backend-Node.js-green)
 ![Python FastAPI](https://img.shields.io/badge/RAG_Engine-Python_FastAPI-yellow)
 
 **Live Demo:** [https://health-chatbot-dun.vercel.app/](https://health-chatbot-dun.vercel.app/)
 
-MedClarify is an accessible, safety-first **Health-Awareness Triage Assistant** designed specifically for common users, including those with limited health literacy. It helps users understand their symptoms, learn about diseases, and get preventative health tips in simple, plain language.
+Healthykuttan is an accessible, safety-first **Health-Awareness Triage Assistant** designed specifically for common users, including those with limited health literacy. It helps users understand their symptoms, learn about diseases, and get preventative health tips in simple, plain language.
 
-> ⚠️ **Medical Disclaimer:** MedClarify is for educational and awareness purposes only. It does not provide medical diagnoses or replace professional medical advice. Always consult a qualified healthcare provider for medical emergencies and treatments.
+> ⚠️ **Medical Disclaimer:** Healthykuttan is for educational and awareness purposes only. It does not provide medical diagnoses or replace professional medical advice. Always consult a qualified healthcare provider for medical emergencies and treatments.
 
 ---
 

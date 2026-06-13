@@ -29,7 +29,7 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [textSize, setTextSize]         = useState(
-    () => localStorage.getItem('medclarify_textsize') || 'medium'
+    () => localStorage.getItem('healthykuttan_textsize') || 'medium'
   )
   const [wipeSuccess, setWipeSuccess]   = useState(false)
   const dropdownRef = useRef(null)
@@ -41,7 +41,7 @@ export default function Navbar() {
 
     const map = { small: '14px', medium: '16px', large: '19px' }
     root.style.fontSize = map[textSize]
-    localStorage.setItem('medclarify_textsize', textSize)
+    localStorage.setItem('healthykuttan_textsize', textSize)
   }, [textSize])
 
   // Close dropdown when clicking outside
@@ -95,7 +95,7 @@ export default function Navbar() {
             <Activity size={18} className="text-white" />
           </div>
           <span className="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base">
-            Med<span className="text-primary-600 dark:text-primary-400">Clarify</span>
+            Healthy<span className="text-primary-600 dark:text-primary-400">kuttan</span>
           </span>
         </div>
 
