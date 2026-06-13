@@ -168,13 +168,13 @@ export default function Home() {
                     transition-colors duration-300">
       <Navbar />
 
-      <main className="max-w-6xl mx-auto px-4 pt-24 pb-16">
+      <main className="max-w-6xl mx-auto px-3 sm:px-4 pt-20 sm:pt-24 pb-16">
 
         {/* ── Hero Search Banner ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-3xl overflow-hidden mb-8 p-8 md:p-12"
+          className="relative rounded-2xl sm:rounded-3xl overflow-hidden mb-6 sm:mb-8 p-5 sm:p-8 md:p-12"
           style={{
             background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #1d4ed8 100%)'
           }}
@@ -201,11 +201,11 @@ export default function Home() {
               AI-Powered Health Awareness
             </motion.div>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">
               What health concern can
               <span className="block">we help you with today?</span>
             </h1>
-            <p className="text-blue-100 mb-8 max-w-lg">
+            <p className="text-blue-100 mb-6 sm:mb-8 max-w-lg text-sm sm:text-base">
               Describe symptoms, ask about diseases, or get prevention tips — 
               instantly, anonymously, for free.
             </p>
@@ -243,8 +243,9 @@ export default function Home() {
                 </motion.button>
               </div>
 
-              {/* Quick symptom pills */}
-              <div className="flex gap-2 mt-4 flex-wrap">
+              {/* Quick symptom pills — horizontal scroll on mobile */}
+              <div className="flex gap-2 mt-4 flex-wrap sm:flex-wrap overflow-x-auto pb-1 sm:pb-0"
+                   style={{ WebkitOverflowScrolling: 'touch' }}>
                 {quickSymptoms.map(symptom => (
                   <motion.button
                     key={symptom}
@@ -253,7 +254,7 @@ export default function Home() {
                     onClick={() => handleQuickSymptom(symptom)}
                     className="bg-white/20 hover:bg-white/30 text-white 
                                text-xs px-3 py-1.5 rounded-full transition
-                               backdrop-blur-sm border border-white/20"
+                               backdrop-blur-sm border border-white/20 flex-shrink-0"
                   >
                     {symptom}
                   </motion.button>
@@ -268,7 +269,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-3 gap-4 mb-8"
+          className="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8"
         >
           {[
             { label: 'Diseases Covered', target: 300, suffix: '+' },
@@ -276,10 +277,10 @@ export default function Home() {
             { label: 'Always Free',      target: 100, suffix: '%' },
           ].map((stat, i) => (
             <div key={stat.label}
-                 className="bg-white dark:bg-slate-800 rounded-2xl p-4 
-                            text-center border border-slate-100 dark:border-slate-700
-                            shadow-sm">
-              <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                 className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 
+                        text-center border border-slate-100 dark:border-slate-700
+                        shadow-sm">
+              <div className="text-xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400">
                 <AnimatedCounter target={stat.target} suffix={stat.suffix} />
               </div>
               <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -484,9 +485,9 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          className="mt-8 bg-red-50 dark:bg-red-900/20 border border-red-200 
-                     dark:border-red-800 rounded-3xl p-6 
-                     flex flex-col md:flex-row items-center 
+          className="mt-6 sm:mt-8 bg-red-50 dark:bg-red-900/20 border border-red-200 
+                     dark:border-red-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 
+                     flex flex-col sm:flex-row items-start sm:items-center 
                      justify-between gap-4"
         >
           <div className="flex items-center gap-4">
@@ -503,7 +504,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="flex gap-3 flex-wrap">
+          <div className="flex gap-3 flex-wrap w-full sm:w-auto">
             <div className="bg-red-100 dark:bg-red-900/50 px-5 py-3 
                             rounded-xl text-center">
               <p className="text-xs text-red-500 font-medium">India Emergency</p>

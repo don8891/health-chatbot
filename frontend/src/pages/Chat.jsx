@@ -29,7 +29,7 @@ function Toast({ message, type, onClose }) {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 50 }}
-      className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 
+      className={`fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-auto z-50 flex items-center gap-3 
                   px-5 py-3 rounded-xl shadow-lg text-white text-sm font-medium
                   ${type === 'success' ? 'bg-health-500' : 'bg-red-500'}`}
     >
@@ -264,10 +264,18 @@ export default function Chat() {
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden transition-colors duration-300">
 
+      {/* Mobile backdrop overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* ════════════════════════════════
           SIDEBAR
       ════════════════════════════════ */}
-      <AnimatePresence>
+        <AnimatePresence>
         {(sidebarOpen || window.innerWidth >= 768) && (
           <motion.aside
             initial={{ x: -280 }}
@@ -394,12 +402,14 @@ export default function Chat() {
           )}
         </div>
 
-        {/* ── Input bar ── */}
-        <div className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 px-4 py-4 flex-shrink-0">
-          <div className="flex items-end gap-3 bg-slate-50 dark:bg-slate-700 rounded-2xl 
-                          border border-slate-200 dark:border-slate-600 px-4 py-3">
+        {/* ── Input bar — mobile safe area ── */}
+        <div className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 
+                        px-3 sm:px-4 py-3 sm:py-4 flex-shrink-0"
+             style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
+          <div className="flex items-end gap-2 sm:gap-3 bg-slate-50 dark:bg-slate-700 rounded-2xl 
+                          border border-slate-200 dark:border-slate-600 px-3 sm:px-4 py-2.5 sm:py-3">
             <button className="text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 
-                               transition flex-shrink-0">
+                               transition flex-shrink-0 p-1">
               <Paperclip size={18} />
             </button>
 
@@ -415,17 +425,17 @@ export default function Chat() {
               placeholder={
                 sessionLoading
                   ? 'Loading conversation...'
-                  : 'Describe your symptoms...'
+                  : 'Type a health question...'
               }
               disabled={sessionLoading}
               rows={1}
               className="flex-1 bg-transparent text-sm text-slate-700 dark:text-slate-200 
                          placeholder-slate-400 dark:placeholder-slate-500 outline-none resize-none 
-                         max-h-32 disabled:opacity-50"
+                         max-h-32 disabled:opacity-50 py-1"
             />
 
             <button className="text-slate-400 hover:text-primary-600 
-                               transition flex-shrink-0">
+                               transition flex-shrink-0 p-1">
               <Mic size={18} />
             </button>
 
@@ -434,7 +444,7 @@ export default function Chat() {
               whileTap={{ scale: 0.9 }}
               onClick={sendMessage}
               disabled={sessionLoading}
-              className={`w-9 h-9 rounded-xl flex items-center justify-center 
+              className={`w-10 h-10 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center 
                           flex-shrink-0 transition
                           ${input.trim() && !sessionLoading
                             ? 'bg-primary-600 text-white shadow-md'

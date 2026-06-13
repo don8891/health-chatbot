@@ -76,13 +76,14 @@ export default function Navbar() {
     <motion.nav
       initial={{ y: -60 }}
       animate={{ y: 0 }}
-      className="fixed top-0 w-full z-50 h-16
+      className="fixed top-0 w-full z-50 h-14 sm:h-16
                  bg-white/90 dark:bg-slate-900/90
                  backdrop-blur-md
                  border-b border-slate-200 dark:border-slate-700
                  shadow-sm transition-colors duration-300"
     >
-      <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between gap-4">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 h-full flex items-center justify-between gap-2">
+
 
         {/* ── Logo ── */}
         <div
@@ -93,7 +94,7 @@ export default function Navbar() {
                           flex items-center justify-center shadow-sm">
             <Activity size={18} className="text-white" />
           </div>
-          <span className="font-bold text-slate-800 dark:text-slate-100 text-base">
+          <span className="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base">
             Med<span className="text-primary-600 dark:text-primary-400">Clarify</span>
           </span>
         </div>
@@ -103,7 +104,7 @@ export default function Navbar() {
         {/* ── Right Actions ── */}
         <div className="flex items-center gap-2 flex-shrink-0">
 
-          {/* Chat button */}
+          {/* Chat button — hidden on xs, shows on md+ */}
           <button
             onClick={() => navigate('/chat')}
             className="hidden md:flex items-center gap-2
@@ -197,7 +198,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, scale: 1,    y: 0  }}
                   exit={{   opacity: 0, scale: 0.95, y: -8  }}
                   transition={{ duration: 0.15, ease: 'easeOut' }}
-                  className="absolute right-0 top-full mt-2 w-72
+                  className="absolute right-0 top-full mt-2 w-72 max-w-[calc(100vw-1rem)]
                              bg-white dark:bg-slate-800
                              border border-slate-200 dark:border-slate-700
                              rounded-2xl shadow-2xl overflow-hidden z-50"

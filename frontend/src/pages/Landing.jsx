@@ -83,7 +83,7 @@ export default function Landing() {
 
           {/* Hero */}
           <main className="relative z-10 flex-1 flex flex-col items-center 
-                           justify-center px-6 py-12 text-center">
+                           justify-center px-4 sm:px-6 py-12 text-center">
 
             {/* Badge */}
             <motion.div
@@ -103,7 +103,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-5xl md:text-6xl font-bold text-white mb-6 
+              className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 
                          leading-tight max-w-3xl"
             >
               Understand Your
@@ -119,7 +119,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-slate-300 text-xl mb-4 max-w-xl leading-relaxed"
+              className="text-slate-300 text-lg sm:text-xl mb-4 max-w-xl leading-relaxed"
             >
               AI-powered health awareness for everyone.
             </motion.p>
@@ -148,8 +148,9 @@ export default function Landing() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleStart}
-                className="relative flex items-center gap-3 text-white font-bold 
-                           text-lg px-10 py-5 rounded-2xl shadow-2xl
+                className="relative flex items-center justify-center gap-3 text-white font-bold 
+                           text-base sm:text-lg px-8 sm:px-10 py-4 sm:py-5 rounded-2xl shadow-2xl
+                           w-full sm:w-auto
                            bg-gradient-to-r from-primary-600 to-primary-500
                            hover:from-primary-500 hover:to-primary-400 transition-all"
               >
@@ -175,7 +176,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 max-w-3xl w-full"
+              className="grid grid-cols-2 gap-3 sm:gap-4 mt-12 sm:mt-16 max-w-3xl w-full"
             >
               {features.map(({ icon: Icon, title, desc, color }) => (
                 <div
