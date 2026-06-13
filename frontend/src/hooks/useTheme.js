@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 export function useTheme() {
   const [theme, setTheme] = useState(() => {
     // Read saved preference, default to light
-    return localStorage.getItem('healthykuttan_theme') || 'light'
+    return localStorage.getItem('healthbeacon_theme') || 'light'
   })
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export function useTheme() {
       root.classList.remove('dark')
     }
 
-    localStorage.setItem('healthykuttan_theme', theme)
+    localStorage.setItem('healthbeacon_theme', theme)
   }, [theme])
 
   const toggleTheme = () => {

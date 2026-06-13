@@ -27,7 +27,7 @@ app.use('/api/chats', chatRoutes)
 
 // Health check
 app.get('/', (req, res) => {
-  res.json({ status: 'Healthykuttan Backend Running ✅' })
+  res.json({ status: 'HealthBeacon Backend Running ✅' })
 })
 
 const PORT = process.env.PORT || 5000

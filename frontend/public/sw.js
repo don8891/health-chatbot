@@ -1,4 +1,4 @@
-const CACHE_NAME = 'healthykuttan-v1'
+const CACHE_NAME = 'healthbeacon-v1'
 const urlsToCache = [
   '/',
   '/static/js/bundle.js',
