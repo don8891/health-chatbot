@@ -1,15 +1,15 @@
-# 🏥 HealthBot AI
+# 🏥 MedClarify
 
-![HealthBot AI](https://img.shields.io/badge/Status-Live-success)
+![MedClarify](https://img.shields.io/badge/Status-Live-success)
 ![React](https://img.shields.io/badge/Frontend-React-blue)
 ![Node.js](https://img.shields.io/badge/Backend-Node.js-green)
 ![Python FastAPI](https://img.shields.io/badge/RAG_Engine-Python_FastAPI-yellow)
 
 **Live Demo:** [https://health-chatbot-dun.vercel.app/](https://health-chatbot-dun.vercel.app/)
 
-HealthBot AI is an accessible, safety-first **Health-Awareness Triage Assistant** designed specifically for common users, including those with limited health literacy. It helps users understand their symptoms, learn about diseases, and get preventative health tips in simple, plain language.
+MedClarify is an accessible, safety-first **Health-Awareness Triage Assistant** designed specifically for common users, including those with limited health literacy. It helps users understand their symptoms, learn about diseases, and get preventative health tips in simple, plain language.
 
-> ⚠️ **Medical Disclaimer:** HealthBot AI is for educational and awareness purposes only. It does not provide medical diagnoses or replace professional medical advice. Always consult a qualified healthcare provider for medical emergencies and treatments.
+> ⚠️ **Medical Disclaimer:** MedClarify is for educational and awareness purposes only. It does not provide medical diagnoses or replace professional medical advice. Always consult a qualified healthcare provider for medical emergencies and treatments.
 
 ---
 

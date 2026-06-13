@@ -1,4 +1,4 @@
-const CACHE_NAME = 'healthbot-v1'
+const CACHE_NAME = 'medclarify-v1'
 const urlsToCache = [
   '/',
   '/static/js/bundle.js',

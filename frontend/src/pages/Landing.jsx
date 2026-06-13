@@ -70,7 +70,7 @@ export default function Landing() {
                 <Activity size={18} className="text-white" />
               </div>
               <span className="font-bold text-white text-lg">
-                HealthBot <span className="text-primary-400">AI</span>
+                MedClarify
               </span>
             </div>
             <button

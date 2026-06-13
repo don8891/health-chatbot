@@ -27,7 +27,7 @@ app.use('/api/chats', chatRoutes)
 
 // Health check
 app.get('/', (req, res) => {
-  res.json({ status: 'HealthBot Backend Running ✅' })
+  res.json({ status: 'MedClarify Backend Running ✅' })
 })
 
 const PORT = process.env.PORT || 5000

@@ -187,9 +187,8 @@ export default function Settings() {
           )}
         </div>
 
-        {/* App version */}
         <p className="text-center text-xs text-slate-400 pb-4">
-          HealthBot AI · Free & Open · No accounts ever
+          MedClarify · Free & Open · No accounts ever
         </p>
       </div>
 

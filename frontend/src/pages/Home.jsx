@@ -470,7 +470,7 @@ export default function Home() {
                 </p>
                 <p className="text-xs text-amber-600 dark:text-amber-500 
                                leading-relaxed">
-                  HealthBot AI is for awareness and education only. 
+                  MedClarify is for awareness and education only. 
                   It does not replace professional medical advice. 
                   Always consult a qualified doctor for diagnosis and treatment.
                 </p>
