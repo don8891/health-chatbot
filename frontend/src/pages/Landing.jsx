@@ -74,10 +74,10 @@ export default function Landing() {
               </span>
             </div>
             <button
-              onClick={() => navigate('/settings')}
-              className="text-slate-400 hover:text-white text-sm transition"
+              onClick={() => navigate('/auth')}
+              className="px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition"
             >
-              Settings
+              Sign In
             </button>
           </nav>
 

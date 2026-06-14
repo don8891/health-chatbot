@@ -8,6 +8,7 @@ const messageSchema = new mongoose.Schema({
 
 const chatSchema = new mongoose.Schema({
   sessionId: { type: String, required: true, unique: true, index: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
   title: { type: String, default: 'New Chat' },
   messages: [messageSchema],
   isValid: { type: Boolean, default: false, index: true },

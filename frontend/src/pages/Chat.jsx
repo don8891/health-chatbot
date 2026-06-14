@@ -14,6 +14,7 @@ import { useLocalHistory } from '../hooks/useLocalHistory'
 import ChatHistoryItem from '../components/ChatHistoryItem'
 import MessageBubble   from '../components/MessageBubble'
 import LoadingSpinner  from '../components/LoadingSpinner'
+import Layout          from '../components/Layout'
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000'
 
@@ -191,7 +192,12 @@ export default function Chat() {
     setMessages(prev => [...prev, userMsg])
 
     try {
-      const res = await axios.post(`${API}/api/chats`, { message: userText })
+      const token = localStorage.getItem('auth_token')
+      const res = await axios.post(
+        `${API}/api/chats`,
+        { message: userText },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
       const botText = res.data.answer
 
       const botMsg = { role: 'bot', text: botText, timestamp: new Date().toISOString() }
@@ -226,7 +232,12 @@ export default function Chat() {
     setLoading(true)
 
     try {
-      const res = await axios.post(`${API}/api/chats`, { message: text })
+      const token = localStorage.getItem('auth_token')
+      const res = await axios.post(
+        `${API}/api/chats`,
+        { message: text },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
       const botText = res.data.answer
       const botMsg = { role: 'bot', text: botText, timestamp: new Date().toISOString() }
       setMessages(prev => [...prev, botMsg])
@@ -262,7 +273,8 @@ export default function Chat() {
 
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden transition-colors duration-300">
+    <Layout>
+      <div className="flex-1 flex overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
 
       {/* Mobile backdrop overlay */}
       {sidebarOpen && (
@@ -470,6 +482,7 @@ export default function Chat() {
           />
         )}
       </AnimatePresence>
-    </div>
+      </div>
+    </Layout>
   )
 }

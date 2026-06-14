@@ -5,13 +5,17 @@ const axios = require('axios')
 const { v4: uuidv4 } = require('uuid')
 const Chat = require('../models/Chat')
 const { validateFirstMessage, isJunkMessage } = require('../middleware/validateChat')
+const auth = require('../middleware/authMiddleware')
+
+// Protect all chat routes
+router.use(auth)
 
 // ─────────────────────────────────────────
-// GET /api/chats — fetch valid history only
+// GET /api/chats — fetch valid history only for user
 // ─────────────────────────────────────────
 router.get('/', async (req, res) => {
   try {
-    const chats = await Chat.find({ isValid: true })
+    const chats = await Chat.find({ isValid: true, userId: req.userId })
       .select('sessionId title createdAt messages')
       .sort({ createdAt: -1 })
       .limit(20)
@@ -23,11 +27,12 @@ router.get('/', async (req, res) => {
 })
 
 // ─────────────────────────────────────────
-// GET /api/chats/clean — preview fake chats
+// GET /api/chats/clean — preview fake chats for user
 // ─────────────────────────────────────────
 router.get('/clean', async (req, res) => {
   try {
     const fakeSessions = await Chat.find({
+      userId: req.userId,
       $or: [
         { messages: { $size: 0 } },
         { messages: { $size: 1 } },
@@ -52,11 +57,12 @@ router.get('/clean', async (req, res) => {
 })
 
 // ─────────────────────────────────────────
-// DELETE /api/chats/clean — delete fake chats
+// DELETE /api/chats/clean — delete fake chats for user
 // ─────────────────────────────────────────
 router.delete('/clean', async (req, res) => {
   try {
     const result = await Chat.deleteMany({
+      userId: req.userId,
       $or: [
         { messages: { $size: 0 } },
         { messages: { $size: 1 } },
@@ -96,9 +102,9 @@ router.post('/', validateFirstMessage, async (req, res) => {
       : message
 
     if (sessionId) {
-      // Add to existing session
-      await Chat.findOneAndUpdate(
-        { sessionId },
+      // Add to existing session belonging to user
+      const updatedChat = await Chat.findOneAndUpdate(
+        { sessionId, userId: req.userId },
         {
           $push: {
             messages: [
@@ -107,12 +113,17 @@ router.post('/', validateFirstMessage, async (req, res) => {
             ]
           },
           $set: { isValid: true }
-        }
+        },
+        { new: true }
       )
+      if (!updatedChat) {
+        return res.status(404).json({ error: 'Chat session not found or access denied' })
+      }
     } else {
       // Create new valid session
       const newSession = new Chat({
         sessionId: uuidv4(),
+        userId: req.userId,
         title,
         isValid: true,
         messages: [
@@ -153,13 +164,13 @@ router.patch('/:sessionId/rename', async (req, res) => {
   }
   try {
     const chat = await Chat.findOneAndUpdate(
-      { sessionId: req.params.sessionId },
+      { sessionId: req.params.sessionId, userId: req.userId },
       { $set: { title: title.trim() } },
       { new: true }
     )
     if (!chat) {
-      console.log(`[Rename] Chat not found for sessionId: ${req.params.sessionId}`)
-      return res.status(404).json({ error: 'Chat not found' })
+      console.log(`[Rename] Chat not found or access denied for sessionId: ${req.params.sessionId}`)
+      return res.status(404).json({ error: 'Chat not found or access denied' })
     }
     res.json({ success: true, title: title.trim() })
   } catch (err) {
@@ -171,10 +182,10 @@ router.patch('/:sessionId/rename', async (req, res) => {
 // DELETE /api/chats/:sessionId — delete one chat session
 router.delete('/:sessionId', async (req, res) => {
   try {
-    const deleted = await Chat.findOneAndDelete({ sessionId: req.params.sessionId })
+    const deleted = await Chat.findOneAndDelete({ sessionId: req.params.sessionId, userId: req.userId })
     if (!deleted) {
-      console.log(`[Delete] Chat not found for sessionId: ${req.params.sessionId}`)
-      return res.status(404).json({ error: 'Chat not found' })
+      console.log(`[Delete] Chat not found or access denied for sessionId: ${req.params.sessionId}`)
+      return res.status(404).json({ error: 'Chat not found or access denied' })
     }
     res.json({ success: true })
   } catch (err) {
@@ -186,10 +197,10 @@ router.delete('/:sessionId', async (req, res) => {
 // GET /api/chats/:sessionId — fetch single chat session with all messages
 router.get('/:sessionId', async (req, res) => {
   try {
-    const chat = await Chat.findOne({ sessionId: req.params.sessionId }).lean()
+    const chat = await Chat.findOne({ sessionId: req.params.sessionId, userId: req.userId }).lean()
 
     if (!chat) {
-      return res.status(404).json({ error: 'Chat session not found' })
+      return res.status(404).json({ error: 'Chat session not found or access denied' })
     }
 
     // Safely sort messages by timestamp

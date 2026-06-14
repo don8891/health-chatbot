@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 require('dotenv').config()
 
 const chatRoutes = require('./routes/chatRoutes')
+const authRoutes = require('./routes/auth')
 
 const app = express()
 const allowedOrigins = [
@@ -23,6 +24,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.log('MongoDB Error:', err))
 
 // Routes
+app.use('/api/auth', authRoutes)
 app.use('/api/chats', chatRoutes)
 
 // Health check

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import Navbar from '../components/Navbar'
+import Layout from '../components/Layout'
 import {
   Activity, BookOpen, Phone,
   ArrowRight, ShieldAlert, TrendingUp,
@@ -164,11 +164,9 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 
-                    transition-colors duration-300">
-      <Navbar />
-
-      <main className="max-w-6xl mx-auto px-3 sm:px-4 pt-20 sm:pt-24 pb-16">
+    <Layout>
+      <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+        <div className="max-w-6xl mx-auto px-4 py-6">
 
         {/* ── Hero Search Banner ── */}
         <motion.div
@@ -521,8 +519,8 @@ export default function Home() {
             </div>
           </div>
         </motion.div>
-
-      </main>
-    </div>
+        </div>
+      </div>
+    </Layout>
   )
 }

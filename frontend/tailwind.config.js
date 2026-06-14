@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: 'class',        // ← add this line
+  darkMode: 'class',
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
@@ -12,7 +12,9 @@ module.exports = {
           500: '#0ea5e9',
           600: '#0284c7',
           700: '#0369a1',
+          800: '#075985',
           900: '#0c4a6e',
+          950: '#082f49',
         },
         health: {
           400: '#34d399',
@@ -21,12 +23,23 @@ module.exports = {
         },
         slate: {
           100: '#f1f5f9',
+          150: '#eef2f7',
           200: '#e2e8f0',
           400: '#94a3b8',
+          500: '#64748b',
           600: '#475569',
           700: '#334155',
+          800: '#1e293b',
+          850: '#172033',
           900: '#0f172a',
+          950: '#020617',
+        },
+        red: {
+          650: '#dc2626',
         }
+      },
+      fontSize: {
+        'xxs': ['0.625rem', { lineHeight: '0.875rem' }],
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -45,4 +58,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+}
