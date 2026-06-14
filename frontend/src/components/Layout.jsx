@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Activity, Menu, X, LayoutDashboard, MessageSquare, 
-  Settings, LogOut, Sun, Moon, Sparkles, User
+  Settings, LogOut, Sun, Moon
 } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
 

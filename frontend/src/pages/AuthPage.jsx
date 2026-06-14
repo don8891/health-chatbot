@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
 import axios from 'axios'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Lock, User, Eye, EyeOff, Check, AlertCircle, Sparkles, Activity } from 'lucide-react'
+import { Mail, Lock, User, Eye, EyeOff, Check, AlertCircle, Activity } from 'lucide-react'
 
 export default function AuthPage() {
   const [isRegister, setIsRegister] = useState(false)
