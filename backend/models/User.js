@@ -2,7 +2,15 @@ const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },
-  email: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
+  email: { 
+    type: String, 
+    required: true, 
+    unique: true, 
+    lowercase: true, 
+    trim: true, 
+    index: true,
+    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please provide a valid email format']
+  },
   password: { 
     type: String, 
     required: function() { return !this.googleId; } // Only required if not logging in via Google

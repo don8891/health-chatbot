@@ -28,7 +28,7 @@ export default function AuthPage() {
   }, [navigate])
 
   // Real-time validations
-  const isEmailValid = (email) => /\S+@\S+\.\S+/.test(email)
+  const isEmailValid = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isPasswordValid = (pw) => pw.length >= 6
   const isNameValid = (name) => name.trim().length >= 2
 
