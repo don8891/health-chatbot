@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Activity, Menu, X, LayoutDashboard, MessageSquare, 
-  Settings, LogOut, Sun, Moon
+import {
+  Activity, Menu, X, LayoutDashboard, MessageSquare,
+  Settings, LogOut, Sun, Moon, User
 } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
 
 export default function Layout({ children }) {
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileOpen, setMobileOpen]         = useState(false)
   const [desktopCollapsed, setDesktopCollapsed] = useState(false)
-  const [user, setUser] = useState(null)
-  
-  const navigate = useNavigate()
-  const location = useLocation()
+  const [user, setUser]                     = useState(null)
+
+  const navigate  = useNavigate()
+  const location  = useLocation()
   const { theme, toggleTheme } = useTheme()
 
-  // Load user data
   useEffect(() => {
     try {
       const stored = localStorage.getItem('user_info')
@@ -33,51 +32,49 @@ export default function Layout({ children }) {
   }
 
   const navItems = [
-    { label: 'Dashboard', path: '/home', icon: LayoutDashboard },
-    { label: 'Chat Assistant', path: '/chat', icon: MessageSquare },
-    { label: 'Settings', path: '/settings', icon: Settings },
+    { label: 'Dashboard',      path: '/home',     icon: LayoutDashboard },
+    { label: 'Chat Assistant', path: '/chat',     icon: MessageSquare   },
+    { label: 'Settings',       path: '/settings', icon: Settings        },
   ]
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-slate-900 border-r border-white/5 text-white">
-      {/* Header / Brand */}
-      <div className="flex items-center gap-3 px-6 h-16 border-b border-white/5 flex-shrink-0">
-        <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center shadow-md">
-          <Activity size={18} className="text-white" />
+    <div className="flex flex-col h-full bg-white border-r border-slate-200/80 text-slate-700">
+
+      {/* Brand Header */}
+      <div className="flex items-center gap-3 px-5 h-16 border-b border-slate-100 flex-shrink-0">
+        <div className="w-8 h-8 bg-[#0F6E56] rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+          <Activity size={17} className="text-white" />
         </div>
         {!desktopCollapsed && (
-          <motion.span 
-            initial={{ opacity: 0 }} 
+          <motion.span
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="font-bold text-sm sm:text-base tracking-tight"
+            className="font-black text-sm tracking-tight text-slate-800"
           >
-            Health<span className="text-primary-400">Beacon</span>
+            Health<span className="text-[#1D9E75]">Beacon</span>
           </motion.span>
         )}
       </div>
 
-      {/* User profile section */}
-      <div className="p-4 border-b border-white/5 flex items-center gap-3 flex-shrink-0">
-        {user?.avatar ? (
-          <img src={user.avatar} alt="avatar" className="w-9 h-9 rounded-full object-cover border border-white/10" />
-        ) : (
-          <div className="w-9 h-9 rounded-full bg-primary-800 flex items-center justify-center text-white font-bold text-sm">
-            {user?.name ? user.name[0].toUpperCase() : 'U'}
-          </div>
-        )}
+      {/* User Profile Strip */}
+      <div className="px-4 py-4 border-b border-slate-100 flex items-center gap-3 flex-shrink-0">
+        <div className="w-9 h-9 rounded-full bg-[#0F6E56]/10 border-2 border-[#0F6E56]/20
+                        flex items-center justify-center text-[#0F6E56] font-black text-sm flex-shrink-0">
+          {user?.name ? user.name[0].toUpperCase() : <User size={16} />}
+        </div>
         {!desktopCollapsed && (
-          <motion.div 
-            initial={{ opacity: 0, x: -10 }} 
+          <motion.div
+            initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             className="min-w-0 flex-1"
           >
-            <p className="text-xs font-semibold truncate text-slate-200">{user?.name || 'User'}</p>
-            <p className="text-xxs truncate text-slate-500">{user?.email || 'patient@healthbeacon.ai'}</p>
+            <p className="text-xs font-bold text-slate-800 truncate">{user?.name || 'User'}</p>
+            <p className="text-[11px] text-slate-400 truncate">{user?.email || 'healthbeacon.ai'}</p>
           </motion.div>
         )}
       </div>
 
-      {/* Navigation Links */}
+      {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path
@@ -85,40 +82,40 @@ export default function Layout({ children }) {
           return (
             <button
               key={item.label}
-              onClick={() => {
-                navigate(item.path)
-                setMobileOpen(false)
-              }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200
-                ${isActive 
-                  ? 'bg-primary-600 text-white shadow-md shadow-primary-950/20' 
-                  : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}`}
+              onClick={() => { navigate(item.path); setMobileOpen(false) }}
               title={desktopCollapsed ? item.label : undefined}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold
+                          transition-all duration-200
+                          ${isActive
+                            ? 'bg-[#0F6E56] text-white shadow-md shadow-[#0F6E56]/20'
+                            : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'}`}
             >
-              <Icon size={18} className={isActive ? 'text-white' : 'text-slate-400'} />
+              <Icon size={17} className={isActive ? 'text-white' : 'text-slate-400'} />
               {!desktopCollapsed && <span>{item.label}</span>}
             </button>
           )
         })}
       </nav>
 
-      {/* Bottom Footer Actions */}
-      <div className="p-3 border-t border-white/5 space-y-1 flex-shrink-0">
-        {/* Toggle Theme button */}
+      {/* Footer Actions */}
+      <div className="p-3 border-t border-slate-100 space-y-1 flex-shrink-0">
+        {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:bg-white/5 hover:text-slate-200 transition"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold
+                     text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition"
         >
-          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          {theme === 'dark' ? <Sun size={17} className="text-amber-500" /> : <Moon size={17} className="text-slate-400" />}
           {!desktopCollapsed && <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
         </button>
 
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-red-400 hover:bg-red-950/20 hover:text-red-300 transition"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold
+                     text-red-500 hover:bg-red-50 hover:text-red-600 transition"
         >
-          <LogOut size={18} />
+          <LogOut size={17} />
           {!desktopCollapsed && <span>Logout</span>}
         </button>
       </div>
@@ -126,94 +123,95 @@ export default function Layout({ children }) {
   )
 
   return (
-    <div className="min-h-screen flex bg-slate-950 text-slate-100 font-sans transition-colors duration-300">
-      
-      {/* ─────────────────── DESKTOP SIDEBAR ─────────────────── */}
-      <div 
-        className={`hidden md:block flex-shrink-0 border-r border-white/5 transition-all duration-300
-          ${desktopCollapsed ? 'w-16' : 'w-60'}`}
+    <div className="min-h-screen flex bg-[#F7FAF9] font-sans transition-colors duration-300">
+
+      {/* ─── DESKTOP SIDEBAR ─── */}
+      <div
+        className={`hidden md:block flex-shrink-0 border-r border-slate-200/80 transition-all duration-300
+                    ${desktopCollapsed ? 'w-16' : 'w-60'}`}
       >
         <div className="h-screen sticky top-0">
           <SidebarContent />
         </div>
       </div>
 
-      {/* ─────────────────── MAIN VIEWPORT WRAPPER ─────────────────── */}
+      {/* ─── MAIN VIEWPORT ─── */}
       <div className="flex-1 flex flex-col min-w-0 min-h-screen relative">
-        
-        {/* TOPBAR */}
-        <header className="h-16 border-b border-white/5 bg-slate-900/40 backdrop-blur-md sticky top-0 z-30 px-4 flex items-center justify-between">
+
+        {/* Top Bar */}
+        <header className="h-14 border-b border-slate-200/80 bg-white/80 backdrop-blur-md
+                           sticky top-0 z-30 px-4 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-3">
             {/* Hamburger for mobile */}
             <button
               onClick={() => setMobileOpen(true)}
-              className="p-2 -ml-2 rounded-lg text-slate-400 hover:text-white md:hidden transition"
+              className="p-2 -ml-1 rounded-xl text-slate-500 hover:text-[#0F6E56] hover:bg-[#0F6E56]/8 md:hidden transition"
             >
               <Menu size={20} />
             </button>
 
-            {/* Collapse button for desktop */}
+            {/* Collapse toggle for desktop */}
             <button
               onClick={() => setDesktopCollapsed(!desktopCollapsed)}
-              className="hidden md:flex p-2 -ml-2 rounded-lg text-slate-400 hover:text-white transition"
-              title={desktopCollapsed ? 'Expand menu' : 'Collapse menu'}
+              className="hidden md:flex p-2 -ml-1 rounded-xl text-slate-500 hover:text-[#0F6E56] hover:bg-[#0F6E56]/8 transition"
+              title={desktopCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               <Menu size={20} />
             </button>
 
-            {/* Mobile-only logo */}
+            {/* Mobile logo */}
             <div className="flex items-center gap-2 md:hidden">
-              <div className="w-7 h-7 bg-primary-600 rounded-lg flex items-center justify-center">
-                <Activity size={15} className="text-white" />
+              <div className="w-7 h-7 bg-[#0F6E56] rounded-lg flex items-center justify-center">
+                <Activity size={14} className="text-white" />
               </div>
-              <span className="font-bold text-xs tracking-tight">HealthBeacon</span>
+              <span className="font-black text-xs text-slate-800 tracking-tight">
+                Health<span className="text-[#1D9E75]">Beacon</span>
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Quick action: Enter Chat badge/shortcut */}
-            {location.pathname !== '/chat' && (
-              <button
-                onClick={() => navigate('/chat')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-600/10 border border-primary-500/20 text-xxs font-bold text-primary-400 hover:bg-primary-600 hover:text-white transition-all duration-200"
-              >
-                <MessageSquare size={12} />
-                <span>Enter Chat</span>
-              </button>
-            )}
-          </div>
+          {/* Right: quick Chat CTA */}
+          {location.pathname !== '/chat' && (
+            <button
+              onClick={() => navigate('/chat')}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full
+                         bg-[#0F6E56]/10 border border-[#0F6E56]/25
+                         text-[11px] font-bold text-[#0F6E56]
+                         hover:bg-[#0F6E56] hover:text-white transition-all duration-200"
+            >
+              <MessageSquare size={12} />
+              <span>Start Chat</span>
+            </button>
+          )}
         </header>
 
-        {/* PAGE CONTENT CONTAINER */}
+        {/* Page Content */}
         <main className="flex-1 flex flex-col relative overflow-hidden">
           {children}
         </main>
       </div>
 
-      {/* ─────────────────── MOBILE SIDEBAR DRAWER ─────────────────── */}
+      {/* ─── MOBILE DRAWER ─── */}
       <AnimatePresence>
         {mobileOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
+              animate={{ opacity: 0.45 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
-              className="fixed inset-0 bg-black z-40 md:hidden"
+              className="fixed inset-0 bg-slate-900 z-40 md:hidden"
             />
-            {/* Drawer */}
             <motion.div
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 220 }}
               className="fixed inset-y-0 left-0 w-64 z-50 md:hidden shadow-2xl"
             >
-              {/* Close Button Inside Sidebar top */}
               <button
                 onClick={() => setMobileOpen(false)}
-                className="absolute right-4 top-4 p-2 rounded-lg text-slate-400 hover:text-white transition"
+                className="absolute right-4 top-4 p-2 rounded-xl text-slate-400 hover:text-slate-700 transition z-10"
               >
                 <X size={20} />
               </button>
