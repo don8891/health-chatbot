@@ -1,21 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 const STORAGE_KEY = 'healthbeacon_chats'
 const SETTINGS_KEY = 'healthbeacon_settings'
 
 // ── Local history hook ──
 export function useLocalHistory() {
-  const [chatHistory, setChatHistory] = useState([])
-
-  // Load from localStorage on mount
-  useEffect(() => {
+  const [chatHistory, setChatHistory] = useState(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored) setChatHistory(JSON.parse(stored))
+      return stored ? JSON.parse(stored) : []
     } catch {
-      setChatHistory([])
+      return []
     }
-  }, [])
+  })
 
   // Save to localStorage whenever history changes
   const saveHistory = (updated) => {

@@ -6,6 +6,7 @@ import {
   Search, ArrowRight,
   MessageSquare, BookOpen, Sparkles
 } from 'lucide-react'
+import { useLocalHistory } from '../hooks/useLocalHistory'
 
 const healthTips = [
   { text: "Hydration is key: Aim to drink 2-3 liters of water daily to support metabolic activity.", cat: "HYDRATION" },
@@ -16,16 +17,27 @@ const healthTips = [
 
 const aiRecommendations = [
   { title: "Hypertension Awareness", desc: "Monitor salt intake and complete daily activity tracking.", tag: "PREVENTATIVE" },
-  { title: "Post-Activity Hydration", desc: "Replenish electrolytes after heavy workouts.", tag: "FITNESS" }
 ]
 
-const recentChats = [
-  { id: 1, title: "Mild head congestion checks", date: "Today" },
-  { id: 2, title: "Anxiety triggers and breathing guidelines", date: "Yesterday" }
-]
+function formatChatDate(isoString) {
+  if (!isoString) return ''
+  const date = new Date(isoString)
+  const now = new Date()
+  const diffTime = Math.abs(now - date)
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+  if (diffDays <= 1 && date.getDate() === now.getDate()) {
+    return 'Today'
+  } else if (diffDays <= 2 && date.getDate() === now.getDate() - 1) {
+    return 'Yesterday'
+  } else {
+    return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
+  }
+}
 
 export default function Home() {
   const navigate = useNavigate()
+  const { chatHistory } = useLocalHistory()
   const [searchQuery, setSearchQuery] = useState('')
   const [user, setUser] = useState(null)
   const [activeTip, setActiveTip] = useState(0)
@@ -211,23 +223,39 @@ export default function Home() {
                 <BookOpen size={18} className="text-[#06B6D4]" /> Recent Chats
               </h2>
               <div className="space-y-3">
-                {recentChats.map((chat) => (
-                  <div
-                    key={chat.id}
-                    onClick={() => navigate('/chat')}
-                    className="flex items-center justify-between p-4 bg-white border border-slate-200/80
-                               rounded-2xl shadow-sm hover:shadow-md hover:border-[#6C63FF]/30 transition cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 bg-[#6C63FF]/10 border border-[#6C63FF]/15 rounded-xl
-                                      flex items-center justify-center text-[#6C63FF] group-hover:bg-[#6C63FF]/15 transition">
-                        <MessageSquare size={16} />
-                      </div>
-                      <span className="text-xs font-bold text-slate-700">{chat.title}</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{chat.date}</span>
+                {chatHistory.length === 0 ? (
+                  <div className="p-6 bg-white border border-slate-200/80 rounded-[20px] text-center space-y-2 shadow-sm">
+                    <p className="text-xs text-slate-400 font-semibold">No recent chats yet</p>
+                    <button
+                      onClick={() => navigate('/chat')}
+                      className="text-xs font-bold text-[#6C63FF] hover:underline"
+                    >
+                      Start your first assessment
+                    </button>
                   </div>
-                ))}
+                ) : (
+                  chatHistory.slice(0, 4).map((chat) => (
+                    <div
+                      key={chat.sessionId}
+                      onClick={() => navigate('/chat', { state: { sessionId: chat.sessionId } })}
+                      className="flex items-center justify-between p-4 bg-white border border-slate-200/80
+                                 rounded-2xl shadow-sm hover:shadow-md hover:border-[#6C63FF]/30 transition cursor-pointer group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 bg-[#6C63FF]/10 border border-[#6C63FF]/15 rounded-xl
+                                        flex items-center justify-center text-[#6C63FF] group-hover:bg-[#6C63FF]/15 transition">
+                          <MessageSquare size={16} />
+                        </div>
+                        <span className="text-xs font-bold text-slate-700 truncate max-w-[180px] sm:max-w-[280px]">
+                          {chat.title}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        {formatChatDate(chat.createdAt)}
+                      </span>
+                    </div>
+                  ))
+                )}
               </div>
             </motion.div>
 

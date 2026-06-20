@@ -81,6 +81,9 @@ export default function Chat() {
   const [loading, setLoading]                 = useState(false)
   const [sessionLoading, setSessionLoading]   = useState(false)
   const [sidebarOpen, setSidebarOpen]         = useState(false)
+  const navigate  = useNavigate()
+  const location  = useLocation()
+
   const {
     chatHistory,
     createSession,
@@ -89,14 +92,13 @@ export default function Chat() {
     deleteSession,
     getSession
   } = useLocalHistory()
-  const [activeSessionId, setActiveSessionId] = useState(null)
+
+  const [activeSessionId, setActiveSessionId] = useState(location.state?.sessionId || null)
   const [activeSessionMeta, setActiveSessionMeta] = useState(null)
   const [toast, setToast]                     = useState(null)
 
   const bottomRef = useRef(null)
   const textareaRef = useRef(null)
-  const navigate  = useNavigate()
-  const location  = useLocation()
 
   // ── Scroll to bottom ──
   useEffect(() => {
