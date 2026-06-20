@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import {
-  Search, ArrowRight,
+  ArrowRight,
   MessageSquare, BookOpen, Sparkles
 } from 'lucide-react'
 import { useLocalHistory } from '../hooks/useLocalHistory'
@@ -38,7 +38,6 @@ function formatChatDate(isoString) {
 export default function Home() {
   const navigate = useNavigate()
   const { chatHistory } = useLocalHistory()
-  const [searchQuery, setSearchQuery] = useState('')
   const [user, setUser] = useState(null)
   const [activeTip, setActiveTip] = useState(0)
 
@@ -59,17 +58,6 @@ export default function Home() {
     return () => clearInterval(timer)
   }, [])
 
-  const handleSearch = () => {
-    if (!searchQuery.trim()) return
-    navigate('/chat', {
-      state: {
-        autoSend: true,
-        autoSendMessage: searchQuery,
-        prefillInput: searchQuery
-      }
-    })
-  }
-
   return (
     <Layout>
       <div className="flex-1 overflow-y-auto bg-[#FAFBFF] text-slate-800 transition-colors duration-300">
@@ -89,38 +77,6 @@ export default function Home() {
                 Your HealthBeacon AI guide is active. Let's optimize your wellness today.
               </p>
             </div>
-          </motion.div>
-
-          {/* ── Hero Search Widget ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white border border-slate-200/80 p-6 rounded-[28px] shadow-sm
-                       flex flex-col md:flex-row gap-4 items-center"
-          >
-            <div className="relative flex-1 w-full">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                placeholder="Search symptoms, diseases, preventive care..."
-                className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-2xl
-                           py-3.5 pl-12 pr-10 text-sm focus:outline-none focus:ring-2
-                           focus:ring-[#6C63FF]/30 focus:border-[#6C63FF] transition"
-              />
-            </div>
-            <button
-              onClick={handleSearch}
-              className="w-full md:w-auto px-8 py-3.5 bg-gradient-to-r from-[#6C63FF] to-[#7C3AED]
-                         hover:from-[#5B54E8] hover:to-[#6D28D9]
-                         text-white font-bold rounded-2xl transition
-                         hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-[#6C63FF]/20"
-            >
-              Ask AI Guide
-            </button>
           </motion.div>
 
           {/* ── Primary CTA Grid ── */}

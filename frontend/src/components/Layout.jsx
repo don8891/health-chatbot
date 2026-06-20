@@ -169,20 +169,6 @@ export default function Layout({ children }) {
               </span>
             </div>
           </div>
-
-          {/* Right: quick Chat CTA */}
-          {location.pathname !== '/chat' && (
-            <button
-              onClick={() => navigate('/chat')}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full
-                         bg-[#6C63FF]/10 border border-[#6C63FF]/25
-                         text-[11px] font-bold text-[#6C63FF]
-                         hover:bg-[#6C63FF] hover:text-white transition-all duration-200"
-            >
-              <MessageSquare size={12} />
-              <span>Start Chat</span>
-            </button>
-          )}
         </header>
 
         {/* Page Content */}
