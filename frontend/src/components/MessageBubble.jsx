@@ -65,7 +65,7 @@ export default function MessageBubble({ msg, index, onPromptClick }) {
     const lowerHeader = headerText.toLowerCase()
 
     if (lowerHeader.includes("disclaimer") || lowerHeader.includes("warning")) {
-      containerStyle = "p-5 rounded-3xl border border-[#medWarning]/20 bg-[#medWarning]/5 border-[#F4A300]/25 text-[#c28200]"
+      containerStyle = "p-5 rounded-3xl border border-[#F4A300]/20 bg-[#F4A300]/5 text-[#c28200]"
       iconHeader = <ShieldAlert size={16} className="text-[#F4A300] flex-shrink-0 mt-0.5" />
       headerStyle = "font-extrabold text-[#F4A300]"
     } else if (lowerHeader.includes("what this could mean") || lowerHeader.includes("possible causes") || lowerHeader.includes("potential")) {
@@ -103,7 +103,7 @@ export default function MessageBubble({ msg, index, onPromptClick }) {
               <button
                 key={qidx}
                 onClick={() => onPromptClick && onPromptClick(q)}
-                className="text-xs bg-white border border-slate-200 hover:border-[#0F6E56] hover:bg-[#0F6E56]/5 text-slate-700 font-bold px-4 py-2.5 rounded-full transition shadow-sm active:scale-95 text-left"
+                className="text-xs bg-white border border-slate-200 hover:border-[#6C63FF] hover:bg-[#6C63FF]/5 text-slate-700 font-bold px-4 py-2.5 rounded-full transition shadow-sm active:scale-95 text-left"
               >
                 {q}
               </button>
@@ -147,15 +147,15 @@ export default function MessageBubble({ msg, index, onPromptClick }) {
     >
       {/* Bot Icon */}
       {!isUser && (
-        <div className="w-10 h-10 rounded-2xl bg-[#0F6E56]/10 flex items-center justify-center flex-shrink-0 shadow-sm mt-1">
-          <Bot size={20} className="text-[#0F6E56]" />
+        <div className="w-10 h-10 rounded-2xl bg-[#6C63FF]/10 flex items-center justify-center flex-shrink-0 shadow-sm mt-1">
+          <Bot size={20} className="text-[#6C63FF]" />
         </div>
       )}
 
       {/* Bubble / Cards Container */}
       <div className={`flex flex-col gap-1.5 max-w-[85%] sm:max-w-[75%] ${isUser ? 'items-end' : 'items-stretch'}`}>
         {isUser ? (
-          <div className={`px-5 py-3.5 bg-[#0F6E56] text-white rounded-3xl rounded-tr-none shadow-md ${textSizeClass} font-semibold`}>
+          <div className={`px-5 py-3.5 bg-[#6C63FF] text-white rounded-3xl rounded-tr-none shadow-md ${textSizeClass} font-semibold`}>
             {msg.text}
           </div>
         ) : (

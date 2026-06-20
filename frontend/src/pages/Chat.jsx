@@ -41,7 +41,7 @@ function Toast({ message, type, onClose }) {
       exit={{ opacity: 0, y: 60, scale: 0.9 }}
       className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3
                   px-6 py-3.5 rounded-2xl shadow-2xl text-white text-sm font-semibold
-                  ${type === 'success' ? 'bg-[#0F6E56]' : 'bg-[#D9534F]'}`}
+                  ${type === 'success' ? 'bg-[#6C63FF]' : 'bg-[#D9534F]'}`}
     >
       {type === 'success' ? <CheckCircle size={17} /> : <AlertCircle size={17} />}
       {message}
@@ -53,16 +53,16 @@ function Toast({ message, type, onClose }) {
 function TypingIndicator() {
   return (
     <div className="flex items-end gap-3">
-      <div className="w-10 h-10 rounded-2xl bg-[#0F6E56]/10 flex items-center justify-center flex-shrink-0">
-        <Bot size={18} className="text-[#0F6E56]" />
+      <div className="w-10 h-10 rounded-2xl bg-[#6C63FF]/10 flex items-center justify-center flex-shrink-0">
+        <Bot size={18} className="text-[#6C63FF]" />
       </div>
-      <div className="flex items-center gap-1.5 px-5 py-3.5 bg-white border border-slate-200/80 shadow-sm rounded-3xl rounded-bl-none">
+      <div className="flex items-center gap-1.5 px-5 py-3.5 bg-[#6C63FF] text-white rounded-3xl rounded-bl-none shadow-md">
         {[0, 1, 2].map(i => (
           <motion.div
             key={i}
             animate={{ y: [0, -5, 0] }}
             transition={{ duration: 0.55, delay: i * 0.14, repeat: Infinity }}
-            className="w-2 h-2 bg-[#1D9E75] rounded-full"
+            className="w-2 h-2 bg-white rounded-full"
           />
         ))}
       </div>
@@ -236,7 +236,7 @@ export default function Chat() {
 
   return (
     <Layout>
-      <div className="flex-1 flex overflow-hidden bg-[#F7FAF9] transition-colors duration-300">
+      <div className="flex-1 flex overflow-hidden bg-[#FAFBFF] transition-colors duration-300">
 
         {/* Mobile backdrop overlay */}
         {sidebarOpen && (
@@ -261,14 +261,14 @@ export default function Chat() {
               <div className="p-4 border-b border-slate-100">
                 <button
                   onClick={() => navigate('/home')}
-                  className="flex items-center gap-2 text-slate-500 hover:text-[#0F6E56] text-sm font-semibold mb-4 transition"
+                  className="flex items-center gap-2 text-[#6C63FF] hover:text-[#4338CA] text-sm font-semibold mb-4 transition"
                 >
                   <ChevronLeft size={16} /> Back to Home
                 </button>
                 <button
                   onClick={startNewChat}
                   className="w-full flex items-center justify-center gap-2 py-2.5 px-4
-                             bg-[#0F6E56] hover:bg-[#0b5240] text-white text-sm font-bold
+                             bg-[#6C63FF] hover:bg-[#4338CA] text-white text-sm font-bold
                              rounded-xl transition hover:scale-[1.02] active:scale-[0.98] shadow-md"
                 >
                   <Plus size={16} /> New Chat
@@ -283,8 +283,8 @@ export default function Chat() {
 
                 {chatHistory.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 text-center px-4">
-                    <div className="w-14 h-14 bg-[#0F6E56]/8 rounded-2xl flex items-center justify-center mb-4">
-                      <MessageSquare size={22} className="text-[#0F6E56]/60" />
+                    <div className="w-14 h-14 bg-[#6C63FF]/8 rounded-2xl flex items-center justify-center mb-4">
+                      <MessageSquare size={22} className="text-[#6C63FF]/60" />
                     </div>
                     <p className="text-sm font-bold text-slate-500">No chats yet</p>
                     <p className="text-xs text-slate-400 mt-1">Start your first health conversation above</p>
@@ -321,11 +321,11 @@ export default function Chat() {
               className="md:hidden w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200
                          flex items-center justify-center transition"
             >
-              <MessageSquare size={16} className="text-[#0F6E56]" />
+              <MessageSquare size={16} className="text-[#6C63FF]" />
             </button>
 
             {/* Bot avatar */}
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0F6E56] to-[#1D9E75]
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#6C63FF] to-[#7C3AED]
                             flex items-center justify-center shadow-md flex-shrink-0">
               <Bot size={20} className="text-white" />
             </div>
@@ -334,14 +334,14 @@ export default function Chat() {
               <p className="font-bold text-slate-800 text-sm truncate">
                 {activeSessionMeta?.title || 'HealthBeacon AI Assistant'}
               </p>
-              <p className="text-[11px] text-[#1D9E75] flex items-center gap-1.5 font-semibold">
-                <span className="w-2 h-2 bg-[#34C759] rounded-full inline-block animate-pulse" />
+              <p className="text-[11px] text-[#6C63FF] flex items-center gap-1.5 font-semibold">
+                <span className="w-2 h-2 bg-[#6C63FF] rounded-full inline-block animate-pulse" />
                 {sessionLoading ? 'Loading session...' : 'Online · Medical AI'}
               </p>
             </div>
 
             {/* Sparkle badge */}
-            <div className="hidden sm:flex items-center gap-1.5 bg-[#0F6E56]/8 border border-[#0F6E56]/20 text-[#0F6E56] px-3 py-1.5 rounded-full">
+            <div className="hidden sm:flex items-center gap-1.5 bg-[#6C63FF]/10 border border-[#6C63FF]/20 text-[#6C63FF] px-3 py-1.5 rounded-full">
               <Sparkles size={12} />
               <span className="text-[11px] font-bold">AI Powered</span>
             </div>
@@ -387,8 +387,8 @@ export default function Chat() {
                           whileHover={{ scale: 1.04 }}
                           whileTap={{ scale: 0.96 }}
                           onClick={() => handleChipClick(chip)}
-                          className="px-4 py-2.5 bg-white border border-slate-200 hover:border-[#0F6E56]
-                                     hover:bg-[#0F6E56]/5 text-slate-700 hover:text-[#0F6E56]
+                          className="px-4 py-2.5 bg-white border border-slate-200 hover:border-[#6C63FF]
+                                     hover:bg-[#6C63FF]/5 text-slate-700 hover:text-[#6C63FF]
                                      text-xs font-bold rounded-full shadow-sm transition"
                         >
                           {chip}
@@ -411,14 +411,14 @@ export default function Chat() {
             {/* Input wrapper */}
             <div className="max-w-4xl mx-auto w-full">
               <div className="flex items-end gap-3 bg-slate-50 border border-slate-200
-                              hover:border-slate-300 focus-within:border-[#0F6E56]
-                              focus-within:ring-2 focus-within:ring-[#0F6E56]/15
+                              hover:border-slate-300 focus-within:border-[#6C63FF]
+                              focus-within:ring-2 focus-within:ring-[#6C63FF]/15
                               rounded-2xl px-4 py-3 transition-all duration-200 shadow-sm">
 
                 {/* File attach mock button */}
                 <button
                   title="Attach file (coming soon)"
-                  className="text-slate-400 hover:text-[#0F6E56] transition flex-shrink-0 p-1 rounded-lg hover:bg-[#0F6E56]/8"
+                  className="text-slate-400 hover:text-[#6C63FF] transition flex-shrink-0 p-1 rounded-lg hover:bg-[#6C63FF]/8"
                 >
                   <Paperclip size={18} />
                 </button>
@@ -444,7 +444,7 @@ export default function Chat() {
                 {/* Voice mock button */}
                 <button
                   title="Voice input (coming soon)"
-                  className="text-slate-400 hover:text-[#0F6E56] transition flex-shrink-0 p-1 rounded-lg hover:bg-[#0F6E56]/8"
+                  className="text-slate-400 hover:text-[#6C63FF] transition flex-shrink-0 p-1 rounded-lg hover:bg-[#6C63FF]/8"
                 >
                   <Mic size={18} />
                 </button>
@@ -458,7 +458,7 @@ export default function Chat() {
                   className={`w-10 h-10 rounded-xl flex items-center justify-center
                               flex-shrink-0 transition-all duration-200
                               ${input.trim() && !sessionLoading
-                                ? 'bg-[#0F6E56] text-white shadow-lg shadow-[#0F6E56]/25 hover:bg-[#0b5240]'
+                                ? 'bg-[#6C63FF] text-white shadow-lg shadow-[#6C63FF]/25 hover:bg-[#4338CA]'
                                 : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
                 >
                   <Send size={16} />

@@ -42,7 +42,7 @@ export default function Layout({ children }) {
 
       {/* Brand Header */}
       <div className="flex items-center gap-3 px-5 h-16 border-b border-slate-100 flex-shrink-0">
-        <div className="w-8 h-8 bg-[#0F6E56] rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+        <div className="w-8 h-8 from-[#6C63FF] to-[#7C3AED] rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
           <Activity size={17} className="text-white" />
         </div>
         {!desktopCollapsed && (
@@ -51,15 +51,15 @@ export default function Layout({ children }) {
             animate={{ opacity: 1 }}
             className="font-black text-sm tracking-tight text-slate-800"
           >
-            Health<span className="text-[#1D9E75]">Beacon</span>
+            Health<span className="text-[#6C63FF]">Beacon</span>
           </motion.span>
         )}
       </div>
 
       {/* User Profile Strip */}
       <div className="px-4 py-4 border-b border-slate-100 flex items-center gap-3 flex-shrink-0">
-        <div className="w-9 h-9 rounded-full bg-[#0F6E56]/10 border-2 border-[#0F6E56]/20
-                        flex items-center justify-center text-[#0F6E56] font-black text-sm flex-shrink-0">
+        <div className="w-9 h-9 rounded-full from-[#6C63FF] to-[#7C3AED]/10 border-2 border-[#6C63FF]/20
+                        flex items-center justify-center text-[#6C63FF] font-black text-sm flex-shrink-0">
           {user?.name ? user.name[0].toUpperCase() : <User size={16} />}
         </div>
         {!desktopCollapsed && (
@@ -87,7 +87,7 @@ export default function Layout({ children }) {
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold
                           transition-all duration-200
                           ${isActive
-                            ? 'bg-[#0F6E56] text-white shadow-md shadow-[#0F6E56]/20'
+                            ? 'bg-gradient-to-r from-[#6C63FF] to-[#7C3AED] text-white shadow-md shadow-[#6C63FF]/20'
                             : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'}`}
             >
               <Icon size={17} className={isActive ? 'text-white' : 'text-slate-400'} />
@@ -123,7 +123,7 @@ export default function Layout({ children }) {
   )
 
   return (
-    <div className="min-h-screen flex bg-[#F7FAF9] font-sans transition-colors duration-300">
+    <div className="min-h-screen flex bg-[#FAFBFF] font-sans transition-colors duration-300">
 
       {/* ─── DESKTOP SIDEBAR ─── */}
       <div
@@ -145,7 +145,7 @@ export default function Layout({ children }) {
             {/* Hamburger for mobile */}
             <button
               onClick={() => setMobileOpen(true)}
-              className="p-2 -ml-1 rounded-xl text-slate-500 hover:text-[#0F6E56] hover:bg-[#0F6E56]/8 md:hidden transition"
+              className="p-2 -ml-1 rounded-xl text-slate-500 hover:text-[#6C63FF] hover:bg-[#6C63FF]/10 md:hidden transition"
             >
               <Menu size={20} />
             </button>
@@ -153,7 +153,7 @@ export default function Layout({ children }) {
             {/* Collapse toggle for desktop */}
             <button
               onClick={() => setDesktopCollapsed(!desktopCollapsed)}
-              className="hidden md:flex p-2 -ml-1 rounded-xl text-slate-500 hover:text-[#0F6E56] hover:bg-[#0F6E56]/8 transition"
+              className="hidden md:flex p-2 -ml-1 rounded-xl text-slate-500 hover:text-[#6C63FF] hover:bg-[#6C63FF]/10 transition"
               title={desktopCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               <Menu size={20} />
@@ -161,11 +161,11 @@ export default function Layout({ children }) {
 
             {/* Mobile logo */}
             <div className="flex items-center gap-2 md:hidden">
-              <div className="w-7 h-7 bg-[#0F6E56] rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 from-[#6C63FF] to-[#7C3AED] rounded-lg flex items-center justify-center">
                 <Activity size={14} className="text-white" />
               </div>
               <span className="font-black text-xs text-slate-800 tracking-tight">
-                Health<span className="text-[#1D9E75]">Beacon</span>
+                Health<span className="text-[#6C63FF]">Beacon</span>
               </span>
             </div>
           </div>
@@ -175,9 +175,9 @@ export default function Layout({ children }) {
             <button
               onClick={() => navigate('/chat')}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full
-                         bg-[#0F6E56]/10 border border-[#0F6E56]/25
-                         text-[11px] font-bold text-[#0F6E56]
-                         hover:bg-[#0F6E56] hover:text-white transition-all duration-200"
+                         bg-[#6C63FF]/10 border border-[#6C63FF]/25
+                         text-[11px] font-bold text-[#6C63FF]
+                         hover:bg-[#6C63FF] hover:text-white transition-all duration-200"
             >
               <MessageSquare size={12} />
               <span>Start Chat</span>
