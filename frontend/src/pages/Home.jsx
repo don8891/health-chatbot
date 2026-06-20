@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import {
   Search, ArrowRight,
-  MessageSquare, BookOpen, Sparkles, Plus
+  MessageSquare, BookOpen, Sparkles
 } from 'lucide-react'
 
 const healthTips = [
@@ -77,16 +77,6 @@ export default function Home() {
                 Your HealthBeacon AI guide is active. Let's optimize your wellness today.
               </p>
             </div>
-            <button
-              onClick={() => navigate('/chat')}
-              className="flex items-center gap-2 px-5 py-3 rounded-full
-                         bg-gradient-to-r from-[#6C63FF] to-[#7C3AED]
-                         hover:from-[#5B54E8] hover:to-[#6D28D9]
-                         text-white font-bold text-sm shadow-md transition
-                         hover:scale-105 active:scale-95 shadow-[#6C63FF]/25"
-            >
-              <Plus size={16} /> New Checkup
-            </button>
           </motion.div>
 
           {/* ── Hero Search Widget ── */}
