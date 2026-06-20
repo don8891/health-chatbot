@@ -1,41 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import {
-  Shield, Activity, Heart, Lock,
-  Zap, Users, ChevronRight, Eye, Sparkles
-} from 'lucide-react'
-
-const features = [
-  {
-    icon: Lock,
-    title: 'No Account Needed',
-    desc: 'Zero registration. Start instantly.',
-    borderColor: 'glowing-border-cyan',
-    floatClass: 'animate-float-slow'
-  },
-  {
-    icon: Eye,
-    title: 'Completely Anonymous',
-    desc: 'No tracking. No data collection.',
-    borderColor: 'glowing-border-pink',
-    floatClass: 'animate-float-medium'
-  },
-  {
-    icon: Zap,
-    title: 'Instant AI Responses',
-    desc: 'Powered by medical datasets.',
-    borderColor: 'glowing-border-cyan',
-    floatClass: 'animate-float-medium'
-  },
-  {
-    icon: Users,
-    title: 'For Everyone',
-    desc: 'Simple language. All ages.',
-    borderColor: 'glowing-border-pink',
-    floatClass: 'animate-float-slow'
-  },
-]
+import { Shield, Activity, Heart, ChevronRight } from 'lucide-react'
 
 export default function Landing() {
   const [clicked, setClicked] = useState(false)
@@ -61,11 +27,11 @@ export default function Landing() {
           {/* Antigravity floating background glow blobs */}
           <div className="fixed inset-0 pointer-events-none overflow-hidden">
             <div className="absolute top-12 left-10 w-96 h-96 
-                            bg-cyan-300/35 rounded-full blur-3xl animate-float-slow" />
+                            bg-cyan-300/30 rounded-full blur-3xl animate-float-slow" />
             <div className="absolute bottom-10 right-10 w-96 h-96 
-                            bg-pink-300/35 rounded-full blur-3xl animate-float-medium" />
+                            bg-pink-300/30 rounded-full blur-3xl animate-float-medium" />
             <div className="absolute top-1/2 left-1/3 w-80 h-80 
-                            bg-purple-300/25 rounded-full blur-3xl animate-float-slow" />
+                            bg-purple-300/20 rounded-full blur-3xl animate-float-slow" />
           </div>
 
           {/* Glassmorphic Navbar */}
@@ -124,26 +90,17 @@ export default function Landing() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-slate-600 text-base sm:text-lg mb-2 max-w-xl leading-relaxed"
+              className="text-slate-600 text-base sm:text-lg mb-8 max-w-xl leading-relaxed"
             >
-              AI-powered health awareness for everyone. Simple language. Safety-first triage assistant.
-            </motion.p>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-slate-400 text-xs sm:text-sm mb-10 font-medium"
-            >
-              No account. No tracking. Just accurate medical literacy.
+              Your futuristic, AI-powered health triage assistant. Simple language, completely private.
             </motion.p>
 
             {/* CTA Button Wrapper */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4, type: 'spring' }}
-              className="relative group animate-float-medium"
+              transition={{ delay: 0.3, type: 'spring' }}
+              className="relative group animate-float-medium mb-12"
             >
               {/* Outer pulsing glow ring */}
               <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-cyan-400 to-pink-400 
@@ -164,48 +121,37 @@ export default function Landing() {
               </motion.button>
             </motion.div>
 
-            {/* Weightless Floating Feature Cards Grid */}
+            {/* Futuristic Heartbeat Pulse SVG Widget (Centerpiece replacing stats/cards) */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-16 max-w-3xl w-full"
+              transition={{ delay: 0.4, duration: 0.7 }}
+              className="w-full max-w-lg mx-auto liquid-glass glowing-border glowing-border-cyan rounded-3xl p-6 shadow-md animate-float-slow"
             >
-              {features.map(({ icon: Icon, title, desc, borderColor, floatClass }) => (
-                <motion.div
-                  key={title}
-                  whileHover={{ y: -6, scale: 1.02 }}
-                  className={`liquid-glass glowing-border ${borderColor} rounded-3xl p-5 text-left transition-all ${floatClass}`}
-                >
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-100 to-pink-100 
-                                  flex items-center justify-center mb-3 shadow-inner">
-                    <Icon size={18} className="text-slate-700" />
-                  </div>
-                  <p className="text-slate-800 text-sm font-bold mb-1 flex items-center gap-1.5">
-                    {title} <Sparkles size={12} className="text-cyan-500" />
-                  </p>
-                  <p className="text-slate-500 text-xs leading-relaxed">{desc}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Quick Stats Panel */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="flex justify-center gap-12 sm:gap-20 mt-16 px-6 py-4 liquid-glass glowing-border rounded-2xl shadow-sm animate-float-slow"
-            >
-              {[
-                { value: '300+', label: 'Diseases' },
-                { value: '130+', label: 'Symptom Profiles' },
-                { value: '100%', label: 'Free' },
-              ].map(stat => (
-                <div key={stat.label} className="text-center">
-                  <div className="text-2xl font-black text-slate-800">{stat.value}</div>
-                  <div className="text-slate-400 text-xxs font-semibold uppercase tracking-wider mt-1">{stat.label}</div>
-                </div>
-              ))}
+              <div className="flex items-center justify-between mb-4 border-b border-slate-200/40 pb-2">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                  <Activity size={14} className="text-cyan-500 animate-pulse" /> Active Pulse Diagnostics
+                </span>
+                <span className="text-xxs px-2.5 py-0.5 rounded-full bg-cyan-100 text-cyan-700 font-bold">READY</span>
+              </div>
+              <div className="flex items-center justify-center w-full bg-slate-950/5 rounded-2xl py-4">
+                <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" className="w-full h-24 sm:h-28">
+                  <path 
+                    d="M0 50 L40 50 L50 20 L70 80 L80 50 L120 50 L130 10 L150 90 L160 50 L200 50" 
+                    fill="none" 
+                    stroke="#2dd4bf" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth="3"
+                  >
+                    <animate attributeName="stroke-dasharray" dur="3s" from="0, 1000" to="1000, 0" repeatCount="indefinite" />
+                  </path>
+                  <circle cx="160" cy="50" fill="#2dd4bf" r="4">
+                    <animate attributeName="r" dur="1.5s" repeatCount="indefinite" values="4;8;4" />
+                    <animate attributeName="opacity" dur="1.5s" repeatCount="indefinite" values="1;0.5;1" />
+                  </circle>
+                </svg>
+              </div>
             </motion.div>
           </main>
 
