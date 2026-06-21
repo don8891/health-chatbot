@@ -238,12 +238,12 @@ export default function Chat() {
 
   return (
     <Layout>
-      <div className="flex-1 flex overflow-hidden bg-[#FAFBFF] transition-colors duration-300">
+      <div className="flex-1 flex overflow-hidden bg-[var(--page-bg)] transition-colors duration-300">
 
         {/* Mobile backdrop overlay */}
         {sidebarOpen && (
           <div
-            className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm md:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
@@ -256,11 +256,12 @@ export default function Chat() {
               animate={{ x: 0 }}
               exit={{ x: -288 }}
               transition={{ type: 'spring', damping: 28, stiffness: 240 }}
-              className="fixed md:relative z-40 w-72 h-full bg-white border-r border-slate-200/80
-                         flex flex-col shadow-xl md:shadow-none"
+              className="fixed md:relative z-40 w-72 h-full
+                         bg-white dark:bg-[#13131f] border-r border-slate-200/80 dark:border-white/[0.06]
+                         flex flex-col shadow-xl md:shadow-none transition-colors duration-300"
             >
               {/* Sidebar Top */}
-              <div className="p-4 border-b border-slate-100">
+              <div className="p-4 border-b border-slate-100 dark:border-white/[0.06]">
                 <button
                   onClick={() => navigate('/home')}
                   className="flex items-center gap-2 text-[#6C63FF] hover:text-[#4338CA] text-sm font-semibold mb-4 transition"
@@ -279,17 +280,17 @@ export default function Chat() {
 
               {/* History List */}
               <div className="flex-1 overflow-y-auto p-3">
-                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3 px-2">
+                <p className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 px-2">
                   Recent Conversations
                 </p>
 
                 {chatHistory.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 text-center px-4">
-                    <div className="w-14 h-14 bg-[#6C63FF]/8 rounded-2xl flex items-center justify-center mb-4">
+                    <div className="w-14 h-14 bg-[#6C63FF]/8 dark:bg-[#6C63FF]/10 rounded-2xl flex items-center justify-center mb-4">
                       <MessageSquare size={22} className="text-[#6C63FF]/60" />
                     </div>
-                    <p className="text-sm font-bold text-slate-500">No chats yet</p>
-                    <p className="text-xs text-slate-400 mt-1">Start your first health conversation above</p>
+                    <p className="text-sm font-bold text-slate-500 dark:text-slate-400">No chats yet</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Start your first health conversation above</p>
                   </div>
                 ) : (
                   chatHistory.map(chat => (
@@ -315,12 +316,14 @@ export default function Chat() {
         <div className="flex-1 flex flex-col h-full min-w-0">
 
           {/* Chat Header */}
-          <div className="bg-white border-b border-slate-200/80 px-4 sm:px-6 py-3.5
-                          flex items-center gap-3 flex-shrink-0 shadow-sm">
+          <div className="bg-white dark:bg-[#13131f] border-b border-slate-200/80 dark:border-white/[0.06]
+                          px-4 sm:px-6 py-3.5
+                          flex items-center gap-3 flex-shrink-0 shadow-sm transition-colors duration-300">
             {/* Mobile hamburger */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="md:hidden w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200
+              className="md:hidden w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/[0.06]
+                         hover:bg-slate-200 dark:hover:bg-white/10
                          flex items-center justify-center transition"
             >
               <MessageSquare size={16} className="text-[#6C63FF]" />
@@ -333,7 +336,7 @@ export default function Chat() {
             </div>
 
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-slate-800 text-sm truncate">
+              <p className="font-bold text-slate-800 dark:text-slate-100 text-sm truncate">
                 {activeSessionMeta?.title || 'HealthBeacon AI Assistant'}
               </p>
               <p className="text-[11px] text-[#6C63FF] flex items-center gap-1.5 font-semibold">
@@ -379,7 +382,7 @@ export default function Chat() {
                     transition={{ delay: 0.3 }}
                     className="pt-2"
                   >
-                    <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">
+                    <p className="text-[11px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">
                       Quick Start — tap a symptom below:
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -389,8 +392,10 @@ export default function Chat() {
                           whileHover={{ scale: 1.04 }}
                           whileTap={{ scale: 0.96 }}
                           onClick={() => handleChipClick(chip)}
-                          className="px-4 py-2.5 bg-white border border-slate-200 hover:border-[#6C63FF]
-                                     hover:bg-[#6C63FF]/5 text-slate-700 hover:text-[#6C63FF]
+                          className="px-4 py-2.5 bg-white dark:bg-[#1a1a2e]
+                                     border border-slate-200 dark:border-white/[0.08]
+                                     hover:border-[#6C63FF] hover:bg-[#6C63FF]/5
+                                     text-slate-700 dark:text-slate-300 hover:text-[#6C63FF]
                                      text-xs font-bold rounded-full shadow-sm transition"
                         >
                           {chip}
@@ -407,13 +412,16 @@ export default function Chat() {
 
           {/* ── Premium Input Bar ── */}
           <div
-            className="bg-white border-t border-slate-200/80 px-4 sm:px-6 py-4 flex-shrink-0 shadow-lg"
+            className="bg-white dark:bg-[#13131f] border-t border-slate-200/80 dark:border-white/[0.06]
+                       px-4 sm:px-6 py-4 flex-shrink-0 shadow-lg transition-colors duration-300"
             style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
           >
             {/* Input wrapper */}
             <div className="max-w-4xl mx-auto w-full">
-              <div className="flex items-end gap-3 bg-slate-50 border border-slate-200
-                              hover:border-slate-300 focus-within:border-[#6C63FF]
+              <div className="flex items-end gap-3 bg-slate-50 dark:bg-[#1a1a2e]
+                              border border-slate-200 dark:border-white/[0.08]
+                              hover:border-slate-300 dark:hover:border-white/[0.15]
+                              focus-within:border-[#6C63FF] dark:focus-within:border-[#6C63FF]
                               focus-within:ring-2 focus-within:ring-[#6C63FF]/15
                               rounded-2xl px-4 py-3 transition-all duration-200 shadow-sm">
 
@@ -438,8 +446,9 @@ export default function Chat() {
                   placeholder={sessionLoading ? 'Loading conversation...' : 'Describe your symptoms or ask a health question...'}
                   disabled={sessionLoading}
                   rows={1}
-                  className="flex-1 bg-transparent text-sm text-slate-700
-                             placeholder-slate-400 outline-none resize-none
+                  className="flex-1 bg-transparent text-sm text-slate-700 dark:text-slate-200
+                             placeholder-slate-400 dark:placeholder-slate-500
+                             outline-none resize-none
                              max-h-32 disabled:opacity-50 py-1 leading-relaxed"
                 />
 
@@ -461,13 +470,13 @@ export default function Chat() {
                               flex-shrink-0 transition-all duration-200
                               ${input.trim() && !sessionLoading
                                 ? 'bg-[#6C63FF] text-white shadow-lg shadow-[#6C63FF]/25 hover:bg-[#4338CA]'
-                                : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+                                : 'bg-slate-200 dark:bg-slate-700 text-slate-400 cursor-not-allowed'}`}
                 >
                   <Send size={16} />
                 </motion.button>
               </div>
 
-              <p className="text-[11px] text-slate-400 text-center mt-2.5 font-medium">
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 text-center mt-2.5 font-medium">
                 For awareness only · Always consult a qualified healthcare professional
               </p>
             </div>

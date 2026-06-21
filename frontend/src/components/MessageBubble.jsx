@@ -58,32 +58,32 @@ export default function MessageBubble({ msg, index, onPromptClick }) {
     const contentText = section.content.join('\n').trim()
 
     // Determine layout/card styles based on header keywords
-    let containerStyle = "p-5 rounded-3xl border bg-white shadow-sm flex flex-col gap-3"
+    let containerStyle = "p-5 rounded-3xl border border-slate-200 dark:border-white/[0.07] bg-white dark:bg-[#1a1a2e] text-slate-700 dark:text-slate-300 shadow-sm flex flex-col gap-3"
     let iconHeader = <Bot size={16} />
-    let headerStyle = "font-extrabold text-slate-800"
+    let headerStyle = "font-extrabold text-slate-800 dark:text-slate-100"
 
     const lowerHeader = headerText.toLowerCase()
 
     if (lowerHeader.includes("disclaimer") || lowerHeader.includes("warning")) {
-      containerStyle = "p-5 rounded-3xl border border-[#F4A300]/20 bg-[#F4A300]/5 text-[#c28200]"
+      containerStyle = "p-5 rounded-3xl border border-[#F4A300]/20 bg-[#F4A300]/5 dark:bg-[#F4A300]/10 text-[#c28200] dark:text-[#f4a300]"
       iconHeader = <ShieldAlert size={16} className="text-[#F4A300] flex-shrink-0 mt-0.5" />
       headerStyle = "font-extrabold text-[#F4A300]"
     } else if (lowerHeader.includes("what this could mean") || lowerHeader.includes("possible causes") || lowerHeader.includes("potential")) {
-      containerStyle = "p-5 rounded-3xl border border-[#4A90E2]/20 bg-[#4A90E2]/5 text-slate-850"
+      containerStyle = "p-5 rounded-3xl border border-[#4A90E2]/20 bg-[#4A90E2]/5 dark:bg-[#4A90E2]/10 text-slate-700 dark:text-slate-200"
       iconHeader = <Activity size={16} className="text-[#4A90E2] flex-shrink-0 mt-0.5" />
       headerStyle = "font-extrabold text-[#4A90E2]"
     } else if (lowerHeader.includes("self-care") || lowerHeader.includes("suggestions") || lowerHeader.includes("prevention")) {
-      containerStyle = "p-5 rounded-3xl border border-[#34C759]/20 bg-[#34C759]/5 text-slate-850"
+      containerStyle = "p-5 rounded-3xl border border-[#34C759]/20 bg-[#34C759]/5 dark:bg-[#34C759]/10 text-slate-700 dark:text-slate-200"
       iconHeader = <CheckCircle size={16} className="text-[#34C759] flex-shrink-0 mt-0.5" />
       headerStyle = "font-extrabold text-[#34C759]"
     } else if (lowerHeader.includes("see a doctor") || lowerHeader.includes("when to see") || lowerHeader.includes("danger signs")) {
-      containerStyle = "p-5 rounded-3xl border border-[#D9534F]/25 bg-[#D9534F]/5 text-[#a8322e]"
+      containerStyle = "p-5 rounded-3xl border border-[#D9534F]/25 bg-[#D9534F]/5 dark:bg-[#D9534F]/10 text-[#a8322e] dark:text-[#ef4444]"
       iconHeader = <AlertTriangle size={16} className="text-[#D9534F] flex-shrink-0 mt-0.5" />
       headerStyle = "font-extrabold text-[#D9534F]"
     } else if (lowerHeader.includes("privacy") || lowerHeader.includes("security")) {
-      containerStyle = "p-4 rounded-2xl border border-slate-200 bg-slate-50 text-slate-500"
+      containerStyle = "p-4 rounded-2xl border border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-[#1a1a2e] text-slate-500 dark:text-slate-400"
       iconHeader = <ShieldCheck size={14} className="text-slate-400 flex-shrink-0 mt-0.5" />
-      headerStyle = "font-bold text-slate-600"
+      headerStyle = "font-bold text-slate-600 dark:text-slate-300"
     }
 
     // Special behavior for follow-up question blocks: turn bullet items into clickable buttons
@@ -93,7 +93,7 @@ export default function MessageBubble({ msg, index, onPromptClick }) {
         .filter(Boolean)
 
       return (
-        <div key={idx} className="p-5 rounded-3xl border border-[#4A90E2]/15 bg-[#4A90E2]/5 space-y-4">
+        <div key={idx} className="p-5 rounded-3xl border border-[#4A90E2]/15 bg-[#4A90E2]/5 dark:bg-[#4A90E2]/10 space-y-4">
           <div className="flex items-start gap-2">
             <Eye size={16} className="text-[#4A90E2] flex-shrink-0 mt-0.5" />
             <span className={`font-extrabold text-[#4A90E2] ${headingSizeClass}`}>{headerText}</span>
@@ -103,7 +103,10 @@ export default function MessageBubble({ msg, index, onPromptClick }) {
               <button
                 key={qidx}
                 onClick={() => onPromptClick && onPromptClick(q)}
-                className="text-xs bg-white border border-slate-200 hover:border-[#6C63FF] hover:bg-[#6C63FF]/5 text-slate-700 font-bold px-4 py-2.5 rounded-full transition shadow-sm active:scale-95 text-left"
+                className="text-xs bg-white dark:bg-[#1a1a2e] border border-slate-200 dark:border-white/[0.08]
+                           hover:border-[#6C63FF] hover:bg-[#6C63FF]/5
+                           text-slate-700 dark:text-slate-200 font-bold px-4 py-2.5
+                           rounded-full transition shadow-sm active:scale-95 text-left"
               >
                 {q}
               </button>
@@ -116,7 +119,7 @@ export default function MessageBubble({ msg, index, onPromptClick }) {
     return (
       <div key={idx} className={containerStyle}>
         {section.header && (
-          <div className="flex items-start gap-2 border-b border-slate-250/20 pb-2 mb-2">
+          <div className="flex items-start gap-2 border-b border-slate-200/30 dark:border-white/[0.06] pb-2 mb-2">
             {iconHeader}
             <span className={`${headerStyle} ${headingSizeClass}`}>{headerText}</span>
           </div>
@@ -147,7 +150,7 @@ export default function MessageBubble({ msg, index, onPromptClick }) {
     >
       {/* Bot Icon */}
       {!isUser && (
-        <div className="w-10 h-10 rounded-2xl bg-[#6C63FF]/10 flex items-center justify-center flex-shrink-0 shadow-sm mt-1">
+        <div className="w-10 h-10 rounded-2xl bg-[#6C63FF]/10 dark:bg-[#6C63FF]/20 flex items-center justify-center flex-shrink-0 shadow-sm mt-1">
           <Bot size={20} className="text-[#6C63FF]" />
         </div>
       )}
@@ -164,7 +167,9 @@ export default function MessageBubble({ msg, index, onPromptClick }) {
             {sections.length > 0 ? (
               sections.map((section, sidx) => renderSectionCard(section, sidx))
             ) : (
-              <div className={`p-5 bg-white border border-slate-200/80 rounded-3xl shadow-sm text-slate-700 leading-relaxed ${textSizeClass}`}>
+              <div className={`p-5 bg-white dark:bg-[#1a1a2e] border border-slate-200/80 dark:border-white/[0.07]
+                               rounded-3xl shadow-sm text-slate-700 dark:text-slate-200
+                               leading-relaxed ${textSizeClass}`}>
                 <ReactMarkdown>{msg.text}</ReactMarkdown>
               </div>
             )}
@@ -173,7 +178,7 @@ export default function MessageBubble({ msg, index, onPromptClick }) {
 
         {/* Timestamp */}
         {msg.timestamp && (
-          <span className="text-[10px] font-bold text-slate-400 px-2 tracking-wide uppercase">
+          <span className="text-[10px] font-bold text-slate-400 dark:text-slate-600 px-2 tracking-wide uppercase">
             {formatTime(msg.timestamp)}
           </span>
         )}
@@ -181,8 +186,8 @@ export default function MessageBubble({ msg, index, onPromptClick }) {
 
       {/* User Icon */}
       {isUser && (
-        <div className="w-10 h-10 rounded-2xl bg-slate-200 flex items-center justify-center flex-shrink-0 shadow-sm mt-1">
-          <User size={20} className="text-slate-600" />
+        <div className="w-10 h-10 rounded-2xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0 shadow-sm mt-1">
+          <User size={20} className="text-slate-600 dark:text-slate-300" />
         </div>
       )}
     </motion.div>

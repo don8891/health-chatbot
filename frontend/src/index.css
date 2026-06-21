@@ -7,10 +7,38 @@
 @layer base {
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  :root {
+    --page-bg:      #FAFBFF;
+    --surface:      #ffffff;
+    --surface-2:    #f8fafc;
+    --border:       rgba(226,232,240,0.8);
+    --text-primary: #1e293b;
+    --text-muted:   #64748b;
+    --text-faint:   #94a3b8;
+    --sidebar-bg:   #ffffff;
+    --header-bg:    rgba(255,255,255,0.85);
+    --input-bg:     #f8fafc;
+    --chip-bg:      #ffffff;
+  }
+
+  .dark {
+    --page-bg:      #0d0d18;
+    --surface:      #13131f;
+    --surface-2:    #1a1a2e;
+    --border:       rgba(255,255,255,0.07);
+    --text-primary: #e2e8f0;
+    --text-muted:   #94a3b8;
+    --text-faint:   #64748b;
+    --sidebar-bg:   #13131f;
+    --header-bg:    rgba(13,13,24,0.9);
+    --input-bg:     #1a1a2e;
+    --chip-bg:      #1a1a2e;
+  }
+
   body {
     font-family: 'Inter', sans-serif;
-    background-color: #FAFBFF;
-    color: #1E1B4B;
+    background-color: var(--page-bg);
+    color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     transition: background-color 0.3s ease, color 0.3s ease;
     overscroll-behavior: none;
@@ -30,11 +58,6 @@
   /* Momentum scrolling on iOS */
   .overflow-y-auto {
     -webkit-overflow-scrolling: touch;
-  }
-
-  .dark body {
-    background-color: #0f0e1a;
-    color: #e2e8f0;
   }
 
   h1 { @apply text-4xl font-bold tracking-tight; }
@@ -64,14 +87,15 @@
            focus-visible:ring-red-500 focus-visible:ring-offset-2 active:scale-95;
   }
   .glass-card {
-    @apply bg-white/70 backdrop-blur-xl border border-white/80 rounded-3xl shadow-xl;
+    @apply bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-3xl shadow-xl;
   }
   .glass-panel {
-    @apply backdrop-blur-xl bg-[#6C63FF]/5 border border-[#6C63FF]/10 rounded-3xl shadow-2xl;
+    @apply backdrop-blur-xl bg-[#6C63FF]/5 dark:bg-[#6C63FF]/10 border border-[#6C63FF]/10 dark:border-[#6C63FF]/20 rounded-3xl shadow-2xl;
   }
   .input-field {
-    @apply w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50
-           text-slate-700 placeholder-slate-400 text-sm
+    @apply w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-white/10
+           bg-slate-50 dark:bg-[#1a1a2e]
+           text-slate-700 dark:text-slate-200 placeholder-slate-400 text-sm
            focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/30
            focus:border-[#6C63FF] transition-all duration-200;
   }
@@ -82,6 +106,12 @@
     border: 1px solid rgba(255, 255, 255, 0.6);
     box-shadow: 0 12px 32px 0 rgba(108, 99, 255, 0.08),
                 inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+  }
+  .dark .liquid-glass {
+    background: rgba(19, 19, 31, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
   }
   .glowing-border {
     position: relative;
@@ -98,6 +128,11 @@
     mask-composite: exclude;
     pointer-events: none;
   }
+
+  /* ── Utility: page-level bg using CSS var ── */
+  .page-bg  { background-color: var(--page-bg); }
+  .surface  { background-color: var(--surface); }
+  .surface2 { background-color: var(--surface-2); }
 }
 
 /* ── Float Keyframes ── */

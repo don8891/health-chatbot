@@ -60,7 +60,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="flex-1 overflow-y-auto bg-[#FAFBFF] text-slate-800 transition-colors duration-300">
+      <div className="flex-1 overflow-y-auto bg-[var(--page-bg)] text-[var(--text-primary)] transition-colors duration-300">
         <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
 
           {/* ── Welcome Greeting Header ── */}
@@ -70,10 +70,10 @@ export default function Home() {
             className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
           >
             <div>
-              <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight">
                 Hello, {user?.name || 'User'} 👋
               </h1>
-              <p className="text-slate-500 text-sm font-semibold mt-1">
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold mt-1">
                 Your HealthBeacon AI guide is active. Let's optimize your wellness today.
               </p>
             </div>
@@ -125,14 +125,15 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white border border-slate-200/80 p-6 rounded-[32px] shadow-sm flex flex-col justify-between"
+              className="bg-white dark:bg-[#13131f] border border-slate-200/80 dark:border-white/[0.06]
+                         p-6 rounded-[32px] shadow-sm flex flex-col justify-between transition-colors duration-300"
             >
               <div>
                 <span className="text-[10px] font-bold text-[#6C63FF] uppercase tracking-widest
                                  bg-[#6C63FF]/10 px-3 py-1 rounded-full">
                   DAILY WELLNESS
                 </span>
-                <h3 className="font-extrabold text-slate-800 mt-4 text-base">Wellness Tip of the Day</h3>
+                <h3 className="font-extrabold text-slate-800 dark:text-slate-100 mt-4 text-base">Wellness Tip of the Day</h3>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTip}
@@ -142,10 +143,10 @@ export default function Home() {
                     transition={{ duration: 0.35 }}
                     className="mt-3"
                   >
-                    <span className="text-[10px] font-extrabold text-slate-400 block tracking-wider uppercase mb-1">
+                    <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block tracking-wider uppercase mb-1">
                       {healthTips[activeTip].cat}
                     </span>
-                    <p className="text-xs text-slate-600 leading-relaxed font-semibold">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-semibold">
                       "{healthTips[activeTip].text}"
                     </p>
                   </motion.div>
@@ -158,7 +159,7 @@ export default function Home() {
                     key={idx}
                     onClick={() => setActiveTip(idx)}
                     className={`h-1.5 rounded-full transition-all duration-300
-                                ${activeTip === idx ? 'w-6 bg-[#6C63FF]' : 'w-1.5 bg-slate-200'}`}
+                                ${activeTip === idx ? 'w-6 bg-[#6C63FF]' : 'w-1.5 bg-slate-200 dark:bg-slate-700'}`}
                   />
                 ))}
               </div>
@@ -175,12 +176,13 @@ export default function Home() {
               transition={{ delay: 0.25 }}
               className="space-y-4"
             >
-              <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
                 <BookOpen size={18} className="text-[#06B6D4]" /> Recent Chats
               </h2>
               <div className="space-y-3">
                 {chatHistory.length === 0 ? (
-                  <div className="p-6 bg-white border border-slate-200/80 rounded-[20px] text-center space-y-2 shadow-sm">
+                  <div className="p-6 bg-white dark:bg-[#13131f] border border-slate-200/80 dark:border-white/[0.06]
+                                  rounded-[20px] text-center space-y-2 shadow-sm transition-colors">
                     <p className="text-xs text-slate-400 font-semibold">No recent chats yet</p>
                     <button
                       onClick={() => navigate('/chat')}
@@ -194,15 +196,18 @@ export default function Home() {
                     <div
                       key={chat.sessionId}
                       onClick={() => navigate('/chat', { state: { sessionId: chat.sessionId } })}
-                      className="flex items-center justify-between p-4 bg-white border border-slate-200/80
-                                 rounded-2xl shadow-sm hover:shadow-md hover:border-[#6C63FF]/30 transition cursor-pointer group"
+                      className="flex items-center justify-between p-4 bg-white dark:bg-[#13131f]
+                                 border border-slate-200/80 dark:border-white/[0.06]
+                                 rounded-2xl shadow-sm hover:shadow-md hover:border-[#6C63FF]/30
+                                 dark:hover:border-[#6C63FF]/30 transition cursor-pointer group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 bg-[#6C63FF]/10 border border-[#6C63FF]/15 rounded-xl
+                        <div className="w-9 h-9 bg-[#6C63FF]/10 dark:bg-[#6C63FF]/15 border border-[#6C63FF]/15
+                                        dark:border-[#6C63FF]/20 rounded-xl
                                         flex items-center justify-center text-[#6C63FF] group-hover:bg-[#6C63FF]/15 transition">
                           <MessageSquare size={16} />
                         </div>
-                        <span className="text-xs font-bold text-slate-700 truncate max-w-[180px] sm:max-w-[280px]">
+                        <span className="text-xs font-bold text-slate-700 dark:text-slate-200 truncate max-w-[180px] sm:max-w-[280px]">
                           {chat.title}
                         </span>
                       </div>
@@ -222,23 +227,24 @@ export default function Home() {
               transition={{ delay: 0.3 }}
               className="space-y-4"
             >
-              <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
                 <Sparkles size={18} className="text-[#6C63FF]" /> AI Recommendations
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {aiRecommendations.map((rec, i) => (
                   <div
                     key={i}
-                    className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm
-                               hover:shadow-md hover:border-[#6C63FF]/30 transition flex flex-col justify-between group"
+                    className="p-5 bg-white dark:bg-[#13131f] border border-slate-200/80 dark:border-white/[0.06]
+                               rounded-2xl shadow-sm hover:shadow-md hover:border-[#6C63FF]/30
+                               dark:hover:border-[#6C63FF]/30 transition flex flex-col justify-between group"
                   >
                     <div>
                       <span className="text-[9px] font-bold px-2 py-0.5 rounded-full
                                        bg-[#6C63FF]/10 text-[#6C63FF] uppercase tracking-wider">
                         {rec.tag}
                       </span>
-                      <p className="font-extrabold text-slate-800 text-xs mt-3">{rec.title}</p>
-                      <p className="text-[10px] text-slate-500 leading-relaxed mt-1 font-semibold">{rec.desc}</p>
+                      <p className="font-extrabold text-slate-800 dark:text-slate-100 text-xs mt-3">{rec.title}</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed mt-1 font-semibold">{rec.desc}</p>
                     </div>
                     <button
                       onClick={() => navigate('/chat')}

@@ -137,7 +137,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-[#FAFBFF] font-sans">
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-[var(--page-bg)] font-sans transition-colors duration-300">
       
       {/* ── Left Column: Healthcare Trust Illustration (Desktop Only) ── */}
       <div className="hidden lg:flex lg:col-span-5 bg-gradient-to-tr from-[#6C63FF] to-[#7C3AED] p-12 flex-col justify-between relative overflow-hidden">
@@ -180,32 +180,32 @@ export default function AuthPage() {
           initial={{ opacity: 0, scale: 0.96, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="w-full max-w-md bg-white border border-slate-200/80 p-8 rounded-[32px] shadow-xl relative z-10"
+          className="w-full max-w-md bg-white dark:bg-[#13131f] border border-slate-200/80 dark:border-white/[0.06] p-8 rounded-[32px] shadow-xl relative z-10"
         >
           {/* Form Header */}
           <div className="flex flex-col items-center mb-6">
             <div className="w-12 h-12 bg-[#6C63FF]/10 rounded-2xl flex items-center justify-center mb-4">
               <Activity size={24} className="text-[#6C63FF]" />
             </div>
-            <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+            <h1 className="text-2xl font-black text-slate-800 dark:text-slate-50 tracking-tight">
               {isRegister ? 'Create Account' : 'Welcome Back'}
             </h1>
-            <p className="text-xs text-slate-400 mt-1 font-semibold">
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 font-semibold">
               {isRegister ? 'Start your journey with HealthBeacon AI' : 'Sign in to access your dashboard'}
             </p>
           </div>
 
           {/* Switcher Tabs */}
-          <div className="grid grid-cols-2 bg-slate-100 p-1.5 rounded-2xl mb-6 border border-slate-200/40">
+          <div className="grid grid-cols-2 bg-slate-100 dark:bg-[#1a1a2e] p-1.5 rounded-2xl mb-6 border border-slate-200/40 dark:border-white/[0.06]">
             <button
               onClick={() => { setIsRegister(false); setError(''); setSuccess('') }}
-              className={`py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${!isRegister ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+              className={`py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${!isRegister ? 'bg-white dark:bg-[#13131f] text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
             >
               Sign In
             </button>
             <button
               onClick={() => { setIsRegister(true); setError(''); setSuccess('') }}
-              className={`py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${isRegister ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+              className={`py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${isRegister ? 'bg-white dark:bg-[#13131f] text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
             >
               Register
             </button>
@@ -252,8 +252,8 @@ export default function AuthPage() {
                   onChange={handleInputChange}
                   onBlur={() => handleBlur('name')}
                   required
-                  className={`w-full bg-slate-50 border text-slate-700 rounded-xl py-3.5 pl-12 pr-10 text-sm focus:outline-none focus:ring-2 transition duration-200
-                    ${!touched.name ? 'border-slate-200 focus:ring-[#6C63FF]/30 focus:border-[#6C63FF]' : isNameValid(formData.name) ? 'border-[#6C63FF]/30 focus:ring-[#6C63FF]/30' : 'border-[#EF4444]/30 focus:ring-[#EF4444]/30'}`}
+                  className={`w-full bg-slate-50 dark:bg-[#1a1a2e] border text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl py-3.5 pl-12 pr-10 text-sm focus:outline-none focus:ring-2 transition duration-200
+                    ${!touched.name ? 'border-slate-200 dark:border-white/10 focus:ring-[#6C63FF]/30 focus:border-[#6C63FF]' : isNameValid(formData.name) ? 'border-[#6C63FF]/30 focus:ring-[#6C63FF]/30' : 'border-[#EF4444]/30 focus:ring-[#EF4444]/30'}`}
                 />
                 {touched.name && isNameValid(formData.name) && (
                   <Check size={16} className="text-[#34C759] absolute right-4 top-1/2 -translate-y-1/2" />
@@ -272,8 +272,8 @@ export default function AuthPage() {
                 onChange={handleInputChange}
                 onBlur={() => handleBlur('email')}
                 required
-                className={`w-full bg-slate-50 border text-slate-700 rounded-xl py-3.5 pl-12 pr-10 text-sm focus:outline-none focus:ring-2 transition duration-200
-                  ${!touched.email ? 'border-slate-200 focus:ring-[#6C63FF]/30 focus:border-[#6C63FF]' : isEmailValid(formData.email) ? 'border-[#6C63FF]/30 focus:ring-[#6C63FF]/30' : 'border-[#EF4444]/30 focus:ring-[#EF4444]/30'}`}
+                className={`w-full bg-slate-50 dark:bg-[#1a1a2e] border text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl py-3.5 pl-12 pr-10 text-sm focus:outline-none focus:ring-2 transition duration-200
+                  ${!touched.email ? 'border-slate-200 dark:border-white/10 focus:ring-[#6C63FF]/30 focus:border-[#6C63FF]' : isEmailValid(formData.email) ? 'border-[#6C63FF]/30 focus:ring-[#6C63FF]/30' : 'border-[#EF4444]/30 focus:ring-[#EF4444]/30'}`}
               />
               {touched.email && isEmailValid(formData.email) && (
                 <Check size={16} className="text-[#34C759] absolute right-4 top-1/2 -translate-y-1/2" />
@@ -291,8 +291,8 @@ export default function AuthPage() {
                 onChange={handleInputChange}
                 onBlur={() => handleBlur('password')}
                 required
-                className={`w-full bg-slate-50 border text-slate-700 rounded-xl py-3.5 pl-12 pr-12 text-sm focus:outline-none focus:ring-2 transition duration-200
-                  ${!touched.password ? 'border-slate-200 focus:ring-[#6C63FF]/30 focus:border-[#6C63FF]' : isPasswordValid(formData.password) ? 'border-[#6C63FF]/30 focus:ring-[#6C63FF]/30' : 'border-[#EF4444]/30 focus:ring-[#EF4444]/30'}`}
+                className={`w-full bg-slate-50 dark:bg-[#1a1a2e] border text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl py-3.5 pl-12 pr-12 text-sm focus:outline-none focus:ring-2 transition duration-200
+                  ${!touched.password ? 'border-slate-200 dark:border-white/10 focus:ring-[#6C63FF]/30 focus:border-[#6C63FF]' : isPasswordValid(formData.password) ? 'border-[#6C63FF]/30 focus:ring-[#6C63FF]/30' : 'border-[#EF4444]/30 focus:ring-[#EF4444]/30'}`}
               />
               <button
                 type="button"
@@ -310,7 +310,7 @@ export default function AuthPage() {
                   <span>Password Strength</span>
                   <span className={strength.score >= 75 ? 'text-[#34C759]' : strength.score >= 50 ? 'text-[#4A90E2]' : 'text-[#D9534F]'}>{strength.label}</span>
                 </div>
-                <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
                   <div className={`h-full transition-all duration-300 ${strength.color}`} style={{ width: `${strength.score}%` }} />
                 </div>
               </div>
@@ -328,8 +328,8 @@ export default function AuthPage() {
                   onChange={handleInputChange}
                   onBlur={() => handleBlur('confirmPassword')}
                   required
-                  className={`w-full bg-slate-50 border text-slate-700 rounded-xl py-3.5 pl-12 pr-10 text-sm focus:outline-none focus:ring-2 transition duration-200
-                    ${!touched.confirmPassword ? 'border-slate-200 focus:ring-[#6C63FF]/30 focus:border-[#6C63FF]' : isConfirmPasswordValid(formData.password, formData.confirmPassword) ? 'border-[#6C63FF]/30 focus:ring-[#6C63FF]/30' : 'border-[#EF4444]/30 focus:ring-[#EF4444]/30'}`}
+                  className={`w-full bg-slate-50 dark:bg-[#1a1a2e] border text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl py-3.5 pl-12 pr-10 text-sm focus:outline-none focus:ring-2 transition duration-200
+                    ${!touched.confirmPassword ? 'border-slate-200 dark:border-white/10 focus:ring-[#6C63FF]/30 focus:border-[#6C63FF]' : isConfirmPasswordValid(formData.password, formData.confirmPassword) ? 'border-[#6C63FF]/30 focus:ring-[#6C63FF]/30' : 'border-[#EF4444]/30 focus:ring-[#EF4444]/30'}`}
                 />
                 {touched.confirmPassword && isConfirmPasswordValid(formData.password, formData.confirmPassword) && (
                   <Check size={16} className="text-[#34C759] absolute right-4 top-1/2 -translate-y-1/2" />
@@ -340,7 +340,7 @@ export default function AuthPage() {
             {/* Remember Me & Forgot Password (Login Only) */}
             {!isRegister && (
               <div className="flex items-center justify-between text-xs px-1">
-                <label className="flex items-center gap-2 cursor-pointer font-semibold text-slate-500 hover:text-slate-700">
+                <label className="flex items-center gap-2 cursor-pointer font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
                   <input
                     type="checkbox"
                     checked={rememberMe}
@@ -372,9 +372,9 @@ export default function AuthPage() {
           {/* Divider */}
           <div className="relative my-6 flex items-center justify-center">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-200"></div>
+              <div className="w-full border-t border-slate-200 dark:border-white/[0.06]"></div>
             </div>
-            <span className="relative px-3 bg-white text-xxs font-bold text-slate-400 uppercase tracking-widest">Or authenticate via</span>
+            <span className="relative px-3 bg-white dark:bg-[#13131f] text-xxs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Or authenticate via</span>
           </div>
 
           {/* Google SSO Login */}
@@ -391,7 +391,7 @@ export default function AuthPage() {
             </div>
           </div>
 
-          <p className="text-center text-xs text-slate-400 font-semibold mt-6 leading-relaxed">
+          <p className="text-center text-xs text-slate-400 dark:text-slate-500 font-semibold mt-6 leading-relaxed">
             By accessing HealthBeacon AI, you consent to our anonymous medical query processing guidelines.
           </p>
         </motion.div>
