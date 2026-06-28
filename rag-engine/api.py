@@ -53,6 +53,7 @@ retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
 
 class Query(BaseModel):
     query: str
+    language: str = "english"
 
 EMERGENCY_KEYWORDS = [
     "chest pain",
@@ -91,6 +92,10 @@ Please call emergency services or go to the nearest emergency department immedia
     docs = retriever.invoke(q.query)
     context = "\n".join([doc.page_content for doc in docs])
 
+    system_prompt = SYSTEM_PROMPT
+    if q.language.lower() == "malayalam":
+        system_prompt += "\n\nCRITICAL INSTRUCTION: You MUST respond entirely in the Malayalam language. Translate your entire response to Malayalam before outputting. Even if the user asks in English, respond in Malayalam."
+
     # Step 3: Send to Groq LLM with your system prompt
     try:
         response = client.chat.completions.create(
@@ -98,7 +103,7 @@ Please call emergency services or go to the nearest emergency department immedia
             messages=[
                 {
                     "role": "system",
-                    "content": SYSTEM_PROMPT
+                    "content": system_prompt
                 },
                 {
                     "role": "user",

@@ -9,7 +9,7 @@ import {
   MessageSquare, Sparkles, Paperclip
 } from 'lucide-react'
 
-import { useLocalHistory } from '../hooks/useLocalHistory'
+import { useLocalHistory, useSettings } from '../hooks/useLocalHistory'
 import ChatHistoryItem from '../components/ChatHistoryItem'
 import MessageBubble   from '../components/MessageBubble'
 import LoadingSpinner  from '../components/LoadingSpinner'
@@ -92,6 +92,7 @@ export default function Chat() {
     deleteSession,
     getSession
   } = useLocalHistory()
+  const { settings } = useSettings()
 
   const [activeSessionId, setActiveSessionId] = useState(location.state?.sessionId || null)
   const [activeSessionMeta, setActiveSessionMeta] = useState(null)
@@ -167,7 +168,7 @@ export default function Chat() {
       const token = localStorage.getItem('auth_token')
       const res = await axios.post(
         `${API}/api/chats`,
-        { message: trimmed },
+        { message: trimmed, language: settings.language },
         { headers: { Authorization: `Bearer ${token}` } }
       )
       const botMsg = { role: 'bot', text: res.data.answer, timestamp: new Date().toISOString() }
@@ -198,7 +199,7 @@ export default function Chat() {
       const token = localStorage.getItem('auth_token')
       const res = await axios.post(
         `${API}/api/chats`,
-        { message: text },
+        { message: text, language: settings.language },
         { headers: { Authorization: `Bearer ${token}` } }
       )
       const botMsg = { role: 'bot', text: res.data.answer, timestamp: new Date().toISOString() }

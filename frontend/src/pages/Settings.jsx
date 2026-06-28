@@ -105,7 +105,7 @@ export default function Settings() {
               </div>
             </div>
             <div className="flex gap-2 flex-wrap">
-              {['english', 'hindi', 'malayalam', 'tamil'].map(lang => (
+              {['english', 'malayalam'].map(lang => (
                 <OptionButton
                   key={lang}
                   selected={settings.language === lang}

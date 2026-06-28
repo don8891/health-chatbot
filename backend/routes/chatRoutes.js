@@ -86,13 +86,14 @@ router.delete('/clean', async (req, res) => {
 // POST /api/chat — main chat endpoint
 // ─────────────────────────────────────────
 router.post('/', validateFirstMessage, async (req, res) => {
-  const { message, sessionId } = req.body
+  const { message, sessionId, language } = req.body
 
   try {
     // Call Python RAG engine
     const RAG_URL = process.env.RAG_URL || 'http://localhost:8000'
     const ragResponse = await axios.post(`${RAG_URL}/query`, {
-      query: message
+      query: message,
+      language: language || 'english'
     })
     const answer = ragResponse.data.answer
 
