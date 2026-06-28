@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import axios from 'axios'
 import {
-  Send, Mic, Plus,
+  Send, Plus,
   ChevronLeft, Bot,
   CheckCircle, AlertCircle,
-  MessageSquare, Sparkles, Paperclip
+  MessageSquare, Sparkles, Camera
 } from 'lucide-react'
 
 import { useLocalHistory, useSettings } from '../hooks/useLocalHistory'
@@ -100,6 +100,16 @@ export default function Chat() {
 
   const bottomRef = useRef(null)
   const textareaRef = useRef(null)
+  const cameraInputRef = useRef(null)
+
+  const handleCameraCapture = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setToast({ message: 'Photo captured! Image analysis coming soon.', type: 'success' })
+      // Clear input so same file can be captured again if needed
+      e.target.value = null
+    }
+  }
 
   // ── Scroll to bottom ──
   useEffect(() => {
@@ -426,13 +436,24 @@ export default function Chat() {
                               focus-within:ring-2 focus-within:ring-[#6C63FF]/15
                               rounded-2xl px-4 py-3 transition-all duration-200 shadow-sm">
 
-                {/* File attach mock button */}
+                {/* Camera button */}
                 <button
-                  title="Attach file (coming soon)"
+                  onClick={() => cameraInputRef.current?.click()}
+                  title="Take a photo"
                   className="text-slate-400 hover:text-[#6C63FF] transition flex-shrink-0 p-1 rounded-lg hover:bg-[#6C63FF]/8"
                 >
-                  <Paperclip size={18} />
+                  <Camera size={18} />
                 </button>
+                
+                {/* Hidden real camera input */}
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  capture="environment" 
+                  ref={cameraInputRef} 
+                  onChange={handleCameraCapture} 
+                  className="hidden" 
+                />
 
                 <textarea
                   ref={textareaRef}
@@ -453,13 +474,7 @@ export default function Chat() {
                              max-h-32 disabled:opacity-50 py-1 leading-relaxed"
                 />
 
-                {/* Voice mock button */}
-                <button
-                  title="Voice input (coming soon)"
-                  className="text-slate-400 hover:text-[#6C63FF] transition flex-shrink-0 p-1 rounded-lg hover:bg-[#6C63FF]/8"
-                >
-                  <Mic size={18} />
-                </button>
+
 
                 {/* Send button */}
                 <motion.button
