@@ -190,9 +190,12 @@ export default function Chat() {
         addMessage(activeSessionId, trimmed, res.data.answer)
       }
     } catch (err) {
-      const errText = err.response?.data?.error === 'invalid_input'
-        ? '⚠️ Please describe symptoms more clearly. Example: "I have fever and body pain"'
-        : '⚠️ Could not connect to AI. Make sure the backend is running!'
+      let errText = '⚠️ Could not connect to AI. Make sure the backend is running!'
+      if (err.response?.status === 401 || !token) {
+        errText = '🔒 Session expired or unauthorized. Please log in again to continue.'
+      } else if (err.response?.data?.error === 'invalid_input') {
+        errText = '⚠️ Please describe symptoms more clearly. Example: "I have fever and body pain"'
+      }
       setMessages(prev => [...prev, { role: 'bot', text: errText, timestamp: new Date().toISOString() }])
     }
     setLoading(false)
@@ -220,8 +223,12 @@ export default function Chat() {
       } else {
         addMessage(activeSessionId, text, res.data.answer)
       }
-    } catch {
-      setMessages(prev => [...prev, { role: 'bot', text: '⚠️ Could not connect to AI.', timestamp: new Date().toISOString() }])
+    } catch (err) {
+      let errText = '⚠️ Could not connect to AI.'
+      if (err.response?.status === 401) {
+        errText = '🔒 Session expired or unauthorized. Please log in again to continue.'
+      }
+      setMessages(prev => [...prev, { role: 'bot', text: errText, timestamp: new Date().toISOString() }])
     }
     setLoading(false)
   }

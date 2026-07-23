@@ -90,7 +90,7 @@ router.post('/', validateFirstMessage, async (req, res) => {
 
   try {
     // Call Python RAG engine
-    const RAG_URL = process.env.RAG_URL || 'http://localhost:8000'
+    const RAG_URL = process.env.RAG_URL || 'http://127.0.0.1:8000'
     const ragResponse = await axios.post(`${RAG_URL}/query`, {
       query: message,
       language: language || 'english'
