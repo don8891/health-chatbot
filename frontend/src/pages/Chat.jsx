@@ -174,8 +174,8 @@ export default function Chat() {
     const userMsg = { role: 'user', text: trimmed, timestamp: new Date().toISOString() }
     setMessages(prev => [...prev, userMsg])
 
+    const token = localStorage.getItem('auth_token')
     try {
-      const token = localStorage.getItem('auth_token')
       const res = await axios.post(
         `${API}/api/chats`,
         { message: trimmed, language: settings.language },

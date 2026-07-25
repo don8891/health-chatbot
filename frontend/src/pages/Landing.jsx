@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import {
   Shield, Activity, Heart, ChevronRight, MessageSquare,
-  ChevronDown, Sparkles, CheckCircle, Zap
+  Sparkles, CheckCircle, Zap
 } from 'lucide-react'
 
 // ── Count-up component (IntersectionObserver driven) ──
@@ -82,45 +82,12 @@ const features = [
   }
 ]
 
-// ── Testimonials data ──
-const testimonials = [
-  {
-    quote: "HealthBeacon helped me understand my migraine triggers without scrolling through terrifying forums. It's calm, simple, and reassuring.",
-    author: "Elena R.",
-    role: "Mother of two",
-    initial: "E"
-  },
-  {
-    quote: "The interface is perfect for my elderly father. Large text, no unnecessary boxes, and immediate answers. Exceptional accessibility.",
-    author: "David K.",
-    role: "Caregiver",
-    initial: "D"
-  }
-]
-
-// ── FAQ data ──
-const faqs = [
-  {
-    q: "Is HealthBeacon AI a replacement for a real doctor?",
-    a: "No. HealthBeacon AI is purely for educational guidance and triage support. It helps you understand what symptoms could mean, but never replaces professional clinical diagnoses. Always seek a doctor's care for diagnoses and treatment."
-  },
-  {
-    q: "How does the app protect my privacy?",
-    a: "We do not store your name, email, or chat histories on our servers unless you explicitly sign up. All guest queries are executed anonymously, keeping your sensitive health concerns completely private."
-  },
-  {
-    q: "What happens if I type an emergency symptom?",
-    a: "Our system immediately scans for critical warning signs (like severe chest pain or difficulty breathing). If triggered, the AI session flags the emergency and displays a high-contrast call-to-action banner."
-  }
-]
-
 // Motion variants for smooth scroll reveals
 const fadeUp = { hidden: { opacity: 0, y: 32 }, visible: { opacity: 1, y: 0 } }
 const staggerContainer = { visible: { transition: { staggerChildren: 0.1 } } }
 
 export default function Landing() {
-  const [clicked, setClicked]     = useState(false)
-  const [activeFaq, setActiveFaq] = useState(null)
+  const [clicked, setClicked] = useState(false)
   const navigate = useNavigate()
 
   const handleStart = () => {
@@ -453,148 +420,6 @@ export default function Landing() {
                   </motion.div>
                 )
               })}
-            </motion.div>
-          </section>
-
-          {/* ══════════════════════════════
-              TESTIMONIALS
-          ══════════════════════════════ */}
-          <section className="relative z-10 max-w-7xl mx-auto w-full px-6 py-16
-                              bg-gradient-to-br from-[#6C63FF]/5 to-[#7C3AED]/5
-                              border border-[#EDE9FE]/80 rounded-[40px] my-8">
-            <motion.div
-              initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }}
-              variants={fadeUp} transition={{ duration: 0.5 }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                Reassurance When You Need It Most
-              </h2>
-            </motion.div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {testimonials.map((test, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: i === 0 ? -30 : 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.55, delay: i * 0.1 }}
-                  className="bg-white border border-slate-100 p-7 rounded-3xl shadow-sm
-                             hover:shadow-lg transition flex flex-col justify-between"
-                >
-                  <p className="text-slate-600 text-sm italic leading-relaxed mb-6">"{test.quote}"</p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#6C63FF] to-[#7C3AED]
-                                    flex items-center justify-center font-black text-white text-sm">
-                      {test.initial}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-slate-800">{test.author}</p>
-                      <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">{test.role}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-
-          {/* ══════════════════════════════
-              FAQ SECTION
-          ══════════════════════════════ */}
-          <section className="relative z-10 max-w-3xl mx-auto w-full px-6 py-16">
-            <motion.div
-              initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }}
-              variants={fadeUp} transition={{ duration: 0.5 }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                Frequently Asked Questions
-              </h2>
-            </motion.div>
-            <div className="space-y-4">
-              {faqs.map((faq, i) => {
-                const isOpen = activeFaq === i
-                return (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: i * 0.08 }}
-                    className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm"
-                  >
-                    <button
-                      onClick={() => setActiveFaq(isOpen ? null : i)}
-                      className="w-full flex items-center justify-between p-5 text-left
-                                 font-bold text-slate-800 hover:text-[#6C63FF] transition"
-                    >
-                      <span className="text-sm pr-4">{faq.q}</span>
-                      <ChevronDown
-                        size={18}
-                        className={`flex-shrink-0 transition-transform duration-200 text-slate-400
-                                    ${isOpen ? 'rotate-180 text-[#6C63FF]' : ''}`}
-                      />
-                    </button>
-                    <AnimatePresence>
-                      {isOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.25 }}
-                          className="border-t border-slate-100 bg-[#FAFBFF]"
-                        >
-                          <p className="p-5 text-sm text-slate-500 leading-relaxed">{faq.a}</p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                )
-              })}
-            </div>
-          </section>
-
-          {/* ══════════════════════════════
-              CTA BANNER
-          ══════════════════════════════ */}
-          <section className="relative z-10 max-w-5xl mx-auto w-full px-6 pb-12">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.5 }}
-              className="bg-gradient-to-r from-[#6C63FF] to-[#7C3AED] rounded-[32px] p-12 text-center
-                         text-white shadow-2xl shadow-[#6C63FF]/25 relative overflow-hidden"
-            >
-              <div className="absolute inset-0 opacity-10 pointer-events-none
-                              bg-[radial-gradient(circle_at_30%_30%,white,transparent)]" />
-              <motion.h2
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="text-3xl font-black mb-4 relative z-10"
-              >
-                Ready to Take Control of Your Health?
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-                className="text-white/80 text-sm mb-8 relative z-10 max-w-xl mx-auto"
-              >
-                Join thousands of users who trust HealthBeacon AI for quick, anonymous health guidance.
-              </motion.p>
-              <motion.button
-                onClick={handleStart}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.97 }}
-                className="relative z-10 inline-flex items-center gap-2 px-8 py-4 rounded-2xl
-                           bg-white text-[#6C63FF] font-bold hover:bg-slate-50 transition shadow-lg"
-              >
-                Get Started Free <ChevronRight size={18} />
-              </motion.button>
             </motion.div>
           </section>
 
