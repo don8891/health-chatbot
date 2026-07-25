@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import FastEmbedEmbeddings
 from groq import Groq
 from dotenv import load_dotenv
 import os
+import base64
 
 load_dotenv()
 
@@ -62,6 +64,12 @@ retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
 
 class Query(BaseModel):
     query: str
+    language: str = "english"
+
+class ImageQuery(BaseModel):
+    imageBase64: str
+    mimeType: str = "image/jpeg"
+    message: Optional[str] = "Please analyze this image and provide health information."
     language: str = "english"
 
 EMERGENCY_KEYWORDS = [
@@ -137,6 +145,70 @@ User message: {q.query}"""
             "sources": 0
         }
 
+@app.post("/analyze-image")
+async def analyze_image(q: ImageQuery):
+    IMAGE_SYSTEM_PROMPT = """You are HealthBeacon, a friendly AI health companion with the ability to analyze medical images.
+
+When analyzing an image:
+- Describe what you observe in the image clearly and naturally
+- If it appears to be a skin condition (rash, wound, discoloration), describe the visual characteristics
+- If it appears to be a medication, supplement, or medical device, describe what you see
+- Provide possible health-related context or information based on what you see
+- Always recommend consulting a qualified healthcare professional for any diagnosis
+- If it is clearly NOT health-related, politely say you can only assist with health-related images
+
+SCOPE: Only provide health-relevant analysis. If this is a food photo, focus on nutrition. If it's a wound or skin issue, describe the visual presentation. If it's a pill or medication, describe the appearance.
+
+IMPORTANT: Never claim to definitively diagnose. Say "this looks like it could be...", "this appears to show...", etc.
+
+EMERGENCY: If the image shows severe bleeding, deep wounds, severe burns, or other emergencies, immediately state: "🚨 This looks like it may require immediate medical attention. Please go to the nearest emergency room or call emergency services right away."
+"""
+
+    user_message = q.message or "Please analyze this image and provide health information."
+
+    if q.language.lower() == "malayalam":
+        IMAGE_SYSTEM_PROMPT += "\n\nCRITICAL INSTRUCTION: You MUST respond entirely in the Malayalam language."
+
+    try:
+        data_url = f"data:{q.mimeType};base64,{q.imageBase64}"
+
+        response = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            messages=[
+                {
+                    "role": "system",
+                    "content": IMAGE_SYSTEM_PROMPT
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": user_message
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": data_url
+                            }
+                        }
+                    ]
+                }
+            ],
+            temperature=0.5,
+            max_tokens=800,
+        )
+
+        answer = response.choices[0].message.content
+        return {"answer": answer, "type": "image_analysis"}
+
+    except Exception as e:
+        print(f"Error in image analysis: {e}")
+        return {
+            "answer": "I had trouble analyzing that image. Could you try again or describe what you're seeing in text? I'm here to help!",
+            "type": "image_analysis"
+        }
+
 @app.get("/")
 def root():
-    return {"status": "RAG Engine running ✅", "model": "llama-3.3-70b-versatile"}
+    return {"status": "RAG Engine running ✅", "model": "llama-3.3-70b-versatile"}

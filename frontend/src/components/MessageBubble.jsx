@@ -158,8 +158,17 @@ export default function MessageBubble({ msg, index, onPromptClick }) {
       {/* Bubble / Cards Container */}
       <div className={`flex flex-col gap-1.5 max-w-[85%] sm:max-w-[75%] ${isUser ? 'items-end' : 'items-stretch'}`}>
         {isUser ? (
-          <div className={`px-5 py-3.5 bg-[#6C63FF] text-white rounded-3xl rounded-tr-none shadow-md ${textSizeClass} font-semibold`}>
-            {msg.text}
+          <div className="flex flex-col items-end gap-2">
+            {msg.image && (
+              <img
+                src={msg.image}
+                alt="Uploaded for analysis"
+                className="max-w-[220px] max-h-[180px] rounded-2xl object-cover border-2 border-white/30 shadow-md"
+              />
+            )}
+            <div className={`px-5 py-3.5 bg-[#6C63FF] text-white rounded-3xl rounded-tr-none shadow-md ${textSizeClass} font-semibold`}>
+              {msg.text}
+            </div>
           </div>
         ) : (
           <div className="space-y-4 w-full">

@@ -157,6 +157,68 @@ router.post('/', validateFirstMessage, async (req, res) => {
   }
 })
 
+// ─────────────────────────────────────────
+// POST /api/chats/analyze-image — vision analysis
+// ─────────────────────────────────────────
+router.post('/analyze-image', async (req, res) => {
+  const { imageBase64, mimeType, message, sessionId, language } = req.body
+
+  if (!imageBase64) {
+    return res.status(400).json({ error: 'imageBase64 is required' })
+  }
+
+  try {
+    const RAG_URL = process.env.RAG_URL || 'http://127.0.0.1:8000'
+    const ragResponse = await axios.post(`${RAG_URL}/analyze-image`, {
+      imageBase64,
+      mimeType: mimeType || 'image/jpeg',
+      message: message || 'Please analyze this image and provide health information.',
+      language: language || 'english'
+    })
+
+    const answer = ragResponse.data.answer
+    const userText = message || '📷 Shared an image for analysis'
+    const title = userText.length > 30 ? userText.substring(0, 30) + '...' : userText
+
+    if (sessionId) {
+      const updatedChat = await Chat.findOneAndUpdate(
+        { sessionId, userId: req.userId },
+        {
+          $push: {
+            messages: [
+              { role: 'user', text: userText },
+              { role: 'bot', text: answer }
+            ]
+          },
+          $set: { isValid: true }
+        },
+        { new: true }
+      )
+      if (!updatedChat) {
+        return res.status(404).json({ error: 'Chat session not found or access denied' })
+      }
+      return res.json({ answer, sessionId })
+    } else {
+      const newSession = new Chat({
+        sessionId: uuidv4(),
+        userId: req.userId,
+        title,
+        isValid: true,
+        messages: [
+          { role: 'user', text: userText },
+          { role: 'bot', text: answer }
+        ]
+      })
+      await newSession.save()
+      return res.json({ answer, sessionId: newSession.sessionId, title: newSession.title })
+    }
+
+  } catch (err) {
+    console.error('Error in image analysis:', err.message || err)
+    res.status(500).json({ error: 'Image analysis failed. Please try again.' })
+  }
+})
+
 // PATCH /api/chats/:sessionId/rename — rename a chat
 router.patch('/:sessionId/rename', async (req, res) => {
   const { title } = req.body

@@ -104,11 +104,19 @@ export default function Chat() {
 
   const handleCameraCapture = (e) => {
     const file = e.target.files[0]
-    if (file) {
-      setToast({ message: 'Photo captured! Image analysis coming soon.', type: 'success' })
-      // Clear input so same file can be captured again if needed
-      e.target.value = null
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = async (event) => {
+      const dataUrl = event.target.result
+      // Extract base64 content (strip the "data:image/jpeg;base64," prefix)
+      const base64 = dataUrl.split(',')[1]
+      const mimeType = file.type || 'image/jpeg'
+      await sendImageMessage(base64, mimeType, dataUrl)
     }
+    reader.readAsDataURL(file)
+    // Clear so the same file can be re-selected
+    e.target.value = null
   }
 
   // ── Scroll to bottom ──
@@ -196,6 +204,46 @@ export default function Chat() {
       } else if (err.response?.data?.error === 'invalid_input') {
         errText = '⚠️ Please describe symptoms more clearly. Example: "I have fever and body pain"'
       }
+      setMessages(prev => [...prev, { role: 'bot', text: errText, timestamp: new Date().toISOString() }])
+    }
+    setLoading(false)
+  }
+
+  // ── Send image for analysis ──
+  const sendImageMessage = async (base64, mimeType, dataUrl) => {
+    const userMsg = {
+      role: 'user',
+      text: '📷 Shared an image for analysis',
+      image: dataUrl,
+      timestamp: new Date().toISOString()
+    }
+    setMessages(prev => [...prev, userMsg])
+    setLoading(true)
+
+    try {
+      const token = localStorage.getItem('auth_token')
+      const res = await axios.post(
+        `${API}/api/chats/analyze-image`,
+        {
+          imageBase64: base64,
+          mimeType,
+          message: '📷 Shared an image for analysis',
+          sessionId: activeSessionId,
+          language: settings.language
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      const botMsg = { role: 'bot', text: res.data.answer, timestamp: new Date().toISOString() }
+      setMessages(prev => [...prev, botMsg])
+      if (!activeSessionId) {
+        const newId = createSession('📷 Image analysis', res.data.answer)
+        setActiveSessionId(newId)
+      } else {
+        addMessage(activeSessionId, '📷 Shared an image for analysis', res.data.answer)
+      }
+      setToast({ message: 'Image analyzed successfully!', type: 'success' })
+    } catch (err) {
+      const errText = '⚠️ Could not analyze the image. Please try again or describe your symptoms in text.'
       setMessages(prev => [...prev, { role: 'bot', text: errText, timestamp: new Date().toISOString() }])
     }
     setLoading(false)
@@ -443,20 +491,19 @@ export default function Chat() {
                               focus-within:ring-2 focus-within:ring-[#6C63FF]/15
                               rounded-2xl px-4 py-3 transition-all duration-200 shadow-sm">
 
-                {/* Camera button */}
+                {/* Camera / Image upload button */}
                 <button
                   onClick={() => cameraInputRef.current?.click()}
-                  title="Take a photo"
+                  title="Capture or upload an image for health analysis"
                   className="text-slate-400 hover:text-[#6C63FF] transition flex-shrink-0 p-1 rounded-lg hover:bg-[#6C63FF]/8"
                 >
                   <Camera size={18} />
                 </button>
                 
-                {/* Hidden real camera input */}
+                {/* Hidden file input — camera + gallery */}
                 <input 
                   type="file" 
                   accept="image/*" 
-                  capture="environment" 
                   ref={cameraInputRef} 
                   onChange={handleCameraCapture} 
                   className="hidden" 
