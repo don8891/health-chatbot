@@ -209,6 +209,13 @@ EMERGENCY: If the image shows severe bleeding, deep wounds, severe burns, or oth
             "type": "image_analysis"
         }
 
+@app.get("/health")
+def health():
+    return {
+        "status": "healthy",
+        "service": "HealthBeacon RAG API"
+    }
+
 @app.get("/")
 def root():
     return {"status": "RAG Engine running ✅", "model": "llama-3.3-70b-versatile"}
